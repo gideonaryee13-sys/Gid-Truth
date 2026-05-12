@@ -1,0 +1,1055 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0c0f;
+  --surface:#12151a;
+  --surface2:#1a1e26;
+  --surface3:#222733;
+  --border:#2a303d;
+  --border2:#363e50;
+  --text:#f0f2f5;
+  --text2:#8b93a8;
+  --text3:#555e72;
+  --green:#22c97a;
+  --green-d:#0e6e42;
+  --green-bg:rgba(34,201,122,0.1);
+  --amber:#f5a623;
+  --amber-bg:rgba(245,166,35,0.1);
+  --red:#e8453c;
+  --red-bg:rgba(232,69,60,0.1);
+  --blue:#4a9fff;
+  --blue-bg:rgba(74,159,255,0.1);
+  --accent:#22c97a;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:600px;overflow:hidden}
+h1,h2,h3,.label{font-family:'Syne',sans-serif}
+
+/* LOGIN */
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:600px;background:var(--bg);position:relative;overflow:hidden}
+.login-bg{position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 0%,rgba(34,201,122,0.07) 0%,transparent 70%);pointer-events:none}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:36px 32px;width:380px;position:relative;z-index:1}
+.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px}
+.logo-circle{width:38px;height:38px;border-radius:10px;background:var(--green);display:flex;align-items:center;justify-content:center}
+.logo-circle i{font-size:20px;color:#000}
+.login-logo-text{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.5px}
+.login-logo-text span{color:var(--green)}
+.login-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:600;margin-bottom:4px}
+.login-sub{font-size:13px;color:var(--text2);margin-bottom:24px}
+.role-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:20px}
+.role-card{border:1.5px solid var(--border);border-radius:10px;padding:14px 8px;text-align:center;cursor:pointer;transition:all .2s;background:var(--surface2)}
+.role-card:hover{border-color:var(--green);background:var(--green-bg)}
+.role-card.selected{border-color:var(--green);background:var(--green-bg)}
+.role-card i{font-size:22px;color:var(--text2);display:block;margin-bottom:6px}
+.role-card.selected i{color:var(--green)}
+.role-card .role-name{font-family:'Syne',sans-serif;font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em}
+.role-card.selected .role-name{color:var(--green)}
+.field{margin-bottom:14px}
+.field label{font-size:12px;color:var(--text2);display:block;margin-bottom:5px;font-weight:500}
+.field input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:border .2s}
+.field input:focus{border-color:var(--green)}
+.btn-primary{width:100%;background:var(--green);color:#000;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;border:none;border-radius:8px;padding:12px;cursor:pointer;letter-spacing:.02em;transition:opacity .2s}
+.btn-primary:hover{opacity:.88}
+.login-hint{font-size:11px;color:var(--text3);text-align:center;margin-top:14px}
+.login-hint span{color:var(--text2)}
+
+/* APP SHELL */
+#app-shell{display:none;min-height:600px;background:var(--bg)}
+.shell-inner{display:flex;min-height:600px}
+
+/* SIDEBAR */
+.sidebar{width:210px;min-width:210px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:0}
+.sb-header{padding:18px 16px 14px;border-bottom:1px solid var(--border)}
+.sb-logo{display:flex;align-items:center;gap:8px}
+.sb-logo-icon{width:28px;height:28px;border-radius:7px;background:var(--green);display:flex;align-items:center;justify-content:center}
+.sb-logo-icon i{font-size:15px;color:#000}
+.sb-logo-text{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:var(--text);letter-spacing:-.3px}
+.sb-logo-text span{color:var(--green)}
+.sb-role-pill{margin-top:8px;display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:600;font-family:'Syne',sans-serif;text-transform:uppercase;letter-spacing:.08em;padding:3px 9px;border-radius:20px}
+.pill-admin{background:rgba(74,159,255,.15);color:var(--blue)}
+.pill-rider{background:var(--amber-bg);color:var(--amber)}
+.pill-passenger{background:var(--green-bg);color:var(--green)}
+.sb-nav{flex:1;padding:12px 8px}
+.sb-section-label{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;padding:0 8px;margin-bottom:4px;margin-top:12px;font-family:'Syne',sans-serif}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--text2);transition:all .15s;margin-bottom:1px}
+.sb-item:hover{background:var(--surface2);color:var(--text)}
+.sb-item.active{background:var(--green-bg);color:var(--green)}
+.sb-item i{font-size:16px}
+.sb-bottom{padding:12px 8px;border-top:1px solid var(--border)}
+.sb-user{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px}
+.sb-avatar{width:28px;height:28px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:'Syne',sans-serif;color:#000}
+.sb-user-info{flex:1;min-width:0}
+.sb-user-name{font-size:12px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-user-email{font-size:10px;color:var(--text3)}
+.sb-logout{cursor:pointer;color:var(--text3);font-size:15px;padding:4px}
+.sb-logout:hover{color:var(--red)}
+
+/* MAIN */
+.main-area{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--surface)}
+.topbar-left{display:flex;align-items:center;gap:10px}
+.topbar-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--text)}
+.topbar-subtitle{font-size:12px;color:var(--text2)}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.top-badge{font-size:11px;padding:4px 10px;border-radius:20px;font-weight:600;font-family:'Syne',sans-serif}
+.badge-live{background:var(--green-bg);color:var(--green)}
+.badge-online{background:var(--green-bg);color:var(--green)}
+.badge-offline{background:var(--surface3);color:var(--text2)}
+
+.content-area{flex:1;overflow-y:auto;padding:20px}
+.screen{display:none}
+.screen.active{display:block}
+
+/* METRICS */
+.metrics-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.metrics-row.three{grid-template-columns:repeat(3,1fr)}
+.metrics-row.two{grid-template-columns:repeat(2,1fr)}
+.metric{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px}
+.metric-label{font-size:11px;color:var(--text2);font-weight:500;font-family:'Syne',sans-serif;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.metric-val{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--text)}
+.metric-sub{font-size:11px;color:var(--text3);margin-top:3px}
+.metric-sub.up{color:var(--green)}
+.metric-sub.down{color:var(--red)}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.card-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.06em}
+
+/* TABLE */
+.data-table{width:100%;border-collapse:collapse;font-size:12px}
+.data-table th{text-align:left;font-size:10px;color:var(--text3);font-weight:700;font-family:'Syne',sans-serif;text-transform:uppercase;letter-spacing:.08em;padding:6px 10px;border-bottom:1px solid var(--border)}
+.data-table td{padding:10px 10px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:middle}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:hover td{background:rgba(255,255,255,.02)}
+
+/* BADGES */
+.badge{font-size:10px;padding:3px 8px;border-radius:20px;font-weight:600;font-family:'Syne',sans-serif;white-space:nowrap}
+.b-green{background:var(--green-bg);color:var(--green)}
+.b-amber{background:var(--amber-bg);color:var(--amber)}
+.b-red{background:var(--red-bg);color:var(--red)}
+.b-blue{background:var(--blue-bg);color:var(--blue)}
+.b-gray{background:var(--surface2);color:var(--text2)}
+
+/* MAP */
+.map-box{height:180px;background:var(--surface2);border-radius:10px;border:1px solid var(--border);position:relative;overflow:hidden}
+.map-roads{position:absolute;inset:0}
+.map-pin{position:absolute;transform:translate(-50%,-50%)}
+.pin-dot{width:12px;height:12px;border-radius:50%;border:2px solid var(--bg)}
+.pin-pulse{position:absolute;width:24px;height:24px;border-radius:50%;top:-6px;left:-6px;animation:pulse 2s infinite}
+@keyframes pulse{0%{transform:scale(1);opacity:.5}100%{transform:scale(2.2);opacity:0}}
+.map-legend{position:absolute;bottom:8px;right:8px;background:rgba(10,12,15,.85);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:10px;display:flex;flex-direction:column;gap:3px}
+.legend-row{display:flex;align-items:center;gap:5px;color:var(--text2)}
+.legend-dot{width:8px;height:8px;border-radius:50%}
+
+/* TOGGLE */
+.toggle-wrap{display:flex;align-items:center;gap:10px}
+.toggle{position:relative;width:44px;height:24px;cursor:pointer}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:var(--surface3);border-radius:12px;transition:.3s}
+.toggle-slider:before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:var(--text2);border-radius:50%;transition:.3s}
+.toggle input:checked+.toggle-slider{background:var(--green)}
+.toggle input:checked+.toggle-slider:before{transform:translateX(20px);background:#000}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:600;font-family:'Syne',sans-serif;cursor:pointer;border:1px solid;transition:all .15s;letter-spacing:.02em}
+.btn-green{background:var(--green);color:#000;border-color:var(--green)}
+.btn-green:hover{opacity:.85}
+.btn-outline{background:transparent;color:var(--text2);border-color:var(--border)}
+.btn-outline:hover{background:var(--surface2);color:var(--text)}
+.btn-danger{background:var(--red-bg);color:var(--red);border-color:transparent}
+.btn-approve{background:var(--green-bg);color:var(--green);border-color:transparent;font-size:11px;padding:5px 10px}
+.btn-reject{background:var(--red-bg);color:var(--red);border-color:transparent;font-size:11px;padding:5px 10px}
+
+/* RIDE REQUEST CARD */
+.ride-request-card{background:var(--surface);border:1px solid var(--green);border-radius:12px;padding:16px;margin-bottom:12px;position:relative;overflow:hidden}
+.ride-request-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--green)}
+.rrc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.rrc-id{font-family:'Syne',sans-serif;font-size:11px;color:var(--text3);font-weight:700}
+.rrc-fare{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--green)}
+.rrc-route{display:flex;flex-direction:column;gap:4px;margin-bottom:12px;padding:10px;background:var(--surface2);border-radius:8px}
+.rrc-from,.rrc-to{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text)}
+.rrc-from i{color:var(--green);font-size:13px}
+.rrc-to i{color:var(--red);font-size:13px}
+.rrc-meta{display:flex;gap:10px;margin-bottom:12px}
+.rrc-chip{background:var(--surface2);border-radius:6px;padding:5px 10px;font-size:11px;color:var(--text2);display:flex;align-items:center;gap:4px}
+.rrc-chip i{font-size:12px}
+.rrc-actions{display:flex;gap:8px}
+.rrc-actions .btn{flex:1;justify-content:center}
+
+/* FARE ESTIMATE */
+.fare-box{background:var(--surface2);border-radius:10px;padding:14px;margin-bottom:14px}
+.fare-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)}
+.fare-row:last-child{border-bottom:none}
+.fare-label{font-size:12px;color:var(--text2)}
+.fare-val{font-size:13px;font-weight:500;color:var(--text)}
+
+/* DESTINATION INPUT */
+.dest-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px 10px 34px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:border .2s;margin-bottom:8px;position:relative}
+.dest-input:focus{border-color:var(--green)}
+.input-wrap{position:relative;margin-bottom:10px}
+.input-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--text3)}
+
+/* RATING STARS */
+.stars{display:flex;gap:4px}
+.star{font-size:20px;cursor:pointer;color:var(--text3);transition:color .1s}
+.star.lit{color:var(--amber)}
+
+/* PROGRESS */
+.progress-track{height:4px;background:var(--surface3);border-radius:2px;margin-top:6px}
+.progress-fill{height:100%;border-radius:2px;background:var(--green);transition:width .5s}
+
+/* RIDER STATUS CARD */
+.status-header{display:flex;align-items:center;justify-content:space-between;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:16px}
+.online-indicator{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500}
+.online-dot{width:8px;height:8px;border-radius:50%;background:var(--green)}
+.online-dot.off{background:var(--text3)}
+
+/* NOTIFICATION */
+.notif{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px;display:flex;align-items:flex-start;gap:10px;margin-bottom:8px}
+.notif i{font-size:16px;margin-top:1px}
+.notif-text{font-size:12px;color:var(--text2);line-height:1.4}
+.notif-time{font-size:10px;color:var(--text3);margin-top:2px}
+
+/* SCROLLBAR */
+.content-area::-webkit-scrollbar{width:4px}
+.content-area::-webkit-scrollbar-track{background:transparent}
+.content-area::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+/* TWO COL */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.two-col-6040{display:grid;grid-template-columns:1.2fr 0.8fr;gap:16px}
+
+/* ACTIVE TRIP BANNER */
+.trip-banner{background:linear-gradient(135deg,var(--green-bg),rgba(34,201,122,.04));border:1px solid rgba(34,201,122,.3);border-radius:12px;padding:16px;margin-bottom:16px}
+.trip-banner-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.trip-stage{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.08em}
+.trip-timer{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--text)}
+
+/* CHART BARS */
+.chart-bars{display:flex;align-items:flex-end;gap:4px;height:80px;padding-top:8px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.bar{width:100%;border-radius:3px 3px 0 0;background:var(--surface3);transition:height .3s}
+.bar.highlight{background:var(--green)}
+.bar-lbl{font-size:9px;color:var(--text3);font-family:'Syne',sans-serif}
+
+/* TOAST */
+#toast{position:fixed;bottom:20px;right:20px;background:var(--surface);border:1px solid var(--green);color:var(--green);padding:10px 16px;border-radius:8px;font-size:12px;font-weight:600;font-family:'Syne',sans-serif;display:none;z-index:999;animation:fadeIn .2s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.two-col>.card,.two-col-6040>.card{margin-bottom:0}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-bg"></div>
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="logo-circle"><i class="ti ti-motorbike"></i></div>
+      <div class="login-logo-text">Moto<span>GO</span></div>
+    </div>
+    <div class="login-title">Sign in to your portal</div>
+    <div class="login-sub">Choose your role and enter credentials</div>
+    <div class="role-grid">
+      <div class="role-card selected" onclick="selectRole('admin',this)" id="role-admin">
+        <i class="ti ti-shield-lock"></i>
+        <div class="role-name">Admin</div>
+      </div>
+      <div class="role-card" onclick="selectRole('rider',this)" id="role-rider">
+        <i class="ti ti-motorbike"></i>
+        <div class="role-name">Rider</div>
+      </div>
+      <div class="role-card" onclick="selectRole('passenger',this)" id="role-passenger">
+        <i class="ti ti-user"></i>
+        <div class="role-name">Passenger</div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="login-email" placeholder="admin@motogo.com" value="admin@motogo.com"/>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="login-pass" placeholder="••••••••" value="password"/>
+    </div>
+    <button class="btn-primary" onclick="doLogin()">Sign in</button>
+    <div class="login-hint">Demo: <span>admin / rider / passenger</span> — any password works</div>
+  </div>
+</div>
+
+<!-- APP SHELL -->
+<div id="app-shell">
+  <div class="shell-inner">
+    <div class="sidebar" id="sidebar">
+      <div class="sb-header">
+        <div class="sb-logo">
+          <div class="sb-logo-icon"><i class="ti ti-motorbike"></i></div>
+          <div class="sb-logo-text">Moto<span>GO</span></div>
+        </div>
+        <div class="sb-role-pill" id="role-pill">Admin</div>
+      </div>
+      <div class="sb-nav" id="sb-nav"></div>
+      <div class="sb-bottom">
+        <div class="sb-user">
+          <div class="sb-avatar" id="sb-avatar">AD</div>
+          <div class="sb-user-info">
+            <div class="sb-user-name" id="sb-name">Admin</div>
+            <div class="sb-user-email" id="sb-email">admin@motogo.com</div>
+          </div>
+          <div class="sb-logout" onclick="logout()" title="Logout"><i class="ti ti-logout"></i></div>
+        </div>
+      </div>
+    </div>
+    <div class="main-area">
+      <div class="topbar">
+        <div class="topbar-left">
+          <div>
+            <div class="topbar-title" id="topbar-title">Dashboard</div>
+            <div class="topbar-subtitle" id="topbar-sub">Accra, Ghana · Live</div>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <span class="top-badge badge-live" id="topbar-badge"><i class="ti ti-circle-filled" style="font-size:8px;vertical-align:1px;margin-right:3px"></i>Live</span>
+        </div>
+      </div>
+      <div class="content-area" id="content-area"></div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ─── DB (localStorage) ───────────────────────────────────────────
+const DB = {
+  get(k){try{return JSON.parse(localStorage.getItem('moto_'+k))||null}catch{return null}},
+  set(k,v){localStorage.setItem('moto_'+k,JSON.stringify(v))},
+  init(){
+    if(!this.get('riders'))this.set('riders',[
+      {id:'r1',name:'Kofi Asante',email:'kofi@motogo.com',phone:'+233 24 111 0001',status:'online',rating:4.9,trips:312,earnings:6240,plate:'GR-2847-21',approved:true},
+      {id:'r2',name:'Yaw Boateng',email:'yaw@motogo.com',phone:'+233 24 111 0002',status:'online',rating:4.7,trips:204,earnings:4100,plate:'GR-1122-19',approved:true},
+      {id:'r3',name:'Nii Darko',email:'nii@motogo.com',phone:'+233 24 111 0003',status:'riding',rating:4.8,trips:451,earnings:9020,plate:'GR-3344-22',approved:true},
+      {id:'r4',name:'Akwesi Frimpong',email:'akwesi@motogo.com',phone:'+233 24 111 0004',status:'offline',rating:4.6,trips:88,earnings:1760,plate:'GR-5566-23',approved:true},
+      {id:'r5',name:'Kwame Asante',email:'kwame@motogo.com',phone:'+233 24 222 0005',status:'pending',rating:0,trips:0,earnings:0,plate:'GR-7788-24',approved:false},
+      {id:'r6',name:'Ama Sarpong',email:'ama@motogo.com',phone:'+233 24 222 0006',status:'pending',rating:0,trips:0,earnings:0,plate:'GR-9900-24',approved:false},
+    ]);
+    if(!this.get('passengers'))this.set('passengers',[
+      {id:'p1',name:'Efua Owusu',email:'efua@motogo.com',phone:'+233 20 111 0001',trips:24,joined:'2024-01-10'},
+      {id:'p2',name:'James Mensah',email:'james@motogo.com',phone:'+233 20 111 0002',trips:11,joined:'2024-03-22'},
+      {id:'p3',name:'Abena Boateng',email:'abena@motogo.com',phone:'+233 20 111 0003',trips:37,joined:'2023-11-05'},
+    ]);
+    if(!this.get('rides'))this.set('rides',[
+      {id:'#1042',passenger:'Efua Owusu',rider:'Kofi Asante',from:'Osu',to:'Airport',fare:18,status:'completed',time:'09:14',rating:5},
+      {id:'#1041',passenger:'James Mensah',rider:'Yaw Boateng',from:'Labone',to:'Cantonments',fare:12,status:'completed',time:'09:02',rating:4},
+      {id:'#1040',passenger:'Abena Boateng',rider:'Nii Darko',from:'Circle',to:'Dansoman',fare:22,status:'active',time:'09:20',rating:null},
+      {id:'#1039',passenger:'Efua Owusu',rider:'Akwesi Frimpong',from:'Madina',to:'Legon',fare:9,status:'completed',time:'08:50',rating:5},
+      {id:'#1038',passenger:'James Mensah',rider:'Kofi Asante',from:'Tema',to:'Accra Mall',fare:35,status:'completed',time:'08:30',rating:4},
+    ]);
+    if(!this.get('stats'))this.set('stats',{trips:247,revenue:1840,activeRides:14,onlineRiders:38});
+  }
+};
+DB.init();
+
+// ─── AUTH ─────────────────────────────────────────────────────────
+let currentUser = null;
+let currentRole = 'admin';
+const DEMO_USERS = {
+  admin:{name:'Admin User',email:'admin@motogo.com',id:'admin1'},
+  rider:{name:'Kofi Asante',email:'kofi@motogo.com',id:'r1'},
+  passenger:{name:'Efua Owusu',email:'efua@motogo.com',id:'p1'},
+};
+
+function selectRole(r,el){
+  currentRole=r;
+  document.querySelectorAll('.role-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  const hints={admin:'admin@motogo.com',rider:'kofi@motogo.com',passenger:'efua@motogo.com'};
+  document.getElementById('login-email').value=hints[r];
+}
+
+function doLogin(){
+  const email=document.getElementById('login-email').value;
+  currentUser={...DEMO_USERS[currentRole],email};
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app-shell').style.display='block';
+  setupPortal(currentRole);
+}
+
+function logout(){
+  currentUser=null;
+  document.getElementById('app-shell').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+}
+
+// ─── PORTAL SETUP ────────────────────────────────────────────────
+const navConfigs = {
+  admin:[
+    {id:'dashboard',icon:'ti-layout-dashboard',label:'Dashboard'},
+    {id:'rides',icon:'ti-route',label:'Live rides'},
+    {id:'riders',icon:'ti-motorbike',label:'Riders'},
+    {id:'passengers',icon:'ti-users',label:'Passengers'},
+    {id:'onboarding',icon:'ti-user-check',label:'Onboarding'},
+    {id:'analytics',icon:'ti-chart-bar',label:'Analytics'},
+  ],
+  rider:[
+    {id:'r-home',icon:'ti-home',label:'Home'},
+    {id:'r-rides',icon:'ti-route',label:'My rides'},
+    {id:'r-earnings',icon:'ti-currency-dollar',label:'Earnings'},
+    {id:'r-profile',icon:'ti-user',label:'Profile'},
+  ],
+  passenger:[
+    {id:'p-home',icon:'ti-home',label:'Book a ride'},
+    {id:'p-tracking',icon:'ti-map-pin',label:'Track ride'},
+    {id:'p-history',icon:'ti-clock',label:'History'},
+    {id:'p-profile',icon:'ti-user',label:'Profile'},
+  ],
+};
+
+const pillClass={admin:'pill-admin',rider:'pill-amber',passenger:'pill-passenger'};
+const pillLabel={admin:'Admin Portal',rider:'Rider Portal',passenger:'Passenger'};
+
+function setupPortal(role){
+  const pill=document.getElementById('role-pill');
+  pill.className='sb-role-pill '+(role==='admin'?'pill-admin':role==='rider'?'pill-amber':'pill-passenger');
+  pill.textContent=pillLabel[role];
+  document.getElementById('sb-name').textContent=currentUser.name;
+  document.getElementById('sb-email').textContent=currentUser.email;
+  document.getElementById('sb-avatar').textContent=currentUser.name.split(' ').map(x=>x[0]).join('').slice(0,2);
+  const nav=document.getElementById('sb-nav');
+  nav.innerHTML='';
+  navConfigs[role].forEach((item,i)=>{
+    const div=document.createElement('div');
+    div.className='sb-item'+(i===0?' active':'');
+    div.innerHTML=`<i class="ti ${item.icon}"></i>${item.label}`;
+    div.onclick=()=>{
+      document.querySelectorAll('.sb-item').forEach(x=>x.classList.remove('active'));
+      div.classList.add('active');
+      renderScreen(item.id);
+    };
+    nav.appendChild(div);
+  });
+  renderScreen(navConfigs[role][0].id);
+}
+
+// ─── SCREEN ROUTER ───────────────────────────────────────────────
+const screenTitles={
+  'dashboard':'Dashboard','rides':'Live rides','riders':'Riders','passengers':'Passengers',
+  'onboarding':'Rider onboarding','analytics':'Analytics',
+  'r-home':'Rider home','r-rides':'My rides','r-earnings':'Earnings','r-profile':'Profile',
+  'p-home':'Book a ride','p-tracking':'Track ride','p-history':'History','p-profile':'Profile',
+};
+
+function renderScreen(id){
+  document.getElementById('topbar-title').textContent=screenTitles[id]||id;
+  const ca=document.getElementById('content-area');
+  ca.innerHTML='';
+  const screens={
+    'dashboard':renderAdminDashboard,'rides':renderAdminRides,'riders':renderAdminRiders,
+    'passengers':renderAdminPassengers,'onboarding':renderAdminOnboarding,'analytics':renderAdminAnalytics,
+    'r-home':renderRiderHome,'r-rides':renderRiderRides,'r-earnings':renderRiderEarnings,'r-profile':renderRiderProfile,
+    'p-home':renderPassengerHome,'p-tracking':renderPassengerTracking,'p-history':renderPassengerHistory,'p-profile':renderPassengerProfile,
+  };
+  if(screens[id])screens[id](ca);
+}
+
+// ─── ADMIN SCREENS ───────────────────────────────────────────────
+function renderAdminDashboard(ca){
+  const stats=DB.get('stats');
+  const rides=DB.get('rides');
+  const riders=DB.get('riders');
+  const online=riders.filter(r=>r.status==='online'||r.status==='riding').length;
+  ca.innerHTML=`
+  <div class="metrics-row">
+    <div class="metric"><div class="metric-label">Active rides</div><div class="metric-val">14</div><div class="metric-sub up">↑ 3 this hour</div></div>
+    <div class="metric"><div class="metric-label">Online riders</div><div class="metric-val">${online}</div><div class="metric-sub">of ${riders.filter(r=>r.approved).length} approved</div></div>
+    <div class="metric"><div class="metric-label">Today's trips</div><div class="metric-val">${stats.trips}</div><div class="metric-sub up">↑ 18% vs yesterday</div></div>
+    <div class="metric"><div class="metric-label">Revenue today</div><div class="metric-val">GH₵ ${stats.revenue.toLocaleString()}</div><div class="metric-sub up">↑ 22%</div></div>
+  </div>
+  <div class="two-col-6040">
+    <div class="card">
+      <div class="card-header"><div class="card-title">Live map — Accra</div><span class="badge b-green">14 active</span></div>
+      <div class="map-box">
+        <svg width="100%" height="100%" style="position:absolute;inset:0">
+          <rect width="100%" height="100%" fill="#1a1e26"/>
+          <line x1="0" y1="55" x2="100%" y2="55" stroke="#2a303d" stroke-width="2"/>
+          <line x1="0" y1="100" x2="100%" y2="100" stroke="#222733" stroke-width="1.5"/>
+          <line x1="0" y1="145" x2="100%" y2="145" stroke="#2a303d" stroke-width="2"/>
+          <line x1="80" y1="0" x2="80" y2="100%" stroke="#2a303d" stroke-width="2"/>
+          <line x1="180" y1="0" x2="180" y2="100%" stroke="#222733" stroke-width="1.5"/>
+          <line x1="280" y1="0" x2="280" y2="100%" stroke="#2a303d" stroke-width="2"/>
+          <line x1="370" y1="0" x2="370" y2="100%" stroke="#2a303d" stroke-width="2"/>
+        </svg>
+        <div class="map-pin" style="left:35%;top:48%">
+          <div class="pin-pulse" style="border-color:var(--green);opacity:.4"></div>
+          <div class="pin-dot" style="background:var(--green)"></div>
+        </div>
+        <div class="map-pin" style="left:52%;top:36%"><div class="pin-dot" style="background:var(--red)"></div></div>
+        <div class="map-pin" style="left:22%;top:60%"><div class="pin-dot" style="background:var(--green)"></div></div>
+        <div class="map-pin" style="left:65%;top:55%"><div class="pin-dot" style="background:var(--green)"></div></div>
+        <div class="map-pin" style="left:76%;top:28%"><div class="pin-dot" style="background:var(--amber)"></div></div>
+        <div class="map-pin" style="left:44%;top:78%"><div class="pin-dot" style="background:var(--text3)"></div></div>
+        <div class="map-legend">
+          <div class="legend-row"><span class="legend-dot" style="background:var(--green)"></span>Rider online</div>
+          <div class="legend-row"><span class="legend-dot" style="background:var(--red)"></span>Passenger</div>
+          <div class="legend-row"><span class="legend-dot" style="background:var(--amber)"></span>On a ride</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Recent rides</div></div>
+      <table class="data-table">
+        <thead><tr><th>Passenger</th><th>Route</th><th>Fare</th><th>Status</th></tr></thead>
+        <tbody>
+          ${rides.slice(0,4).map(r=>`<tr>
+            <td style="color:var(--text)">${r.passenger.split(' ')[0]}</td>
+            <td>${r.from}→${r.to}</td>
+            <td style="color:var(--green)">GH₵${r.fare}</td>
+            <td><span class="badge ${r.status==='active'?'b-amber':'b-green'}">${r.status}</span></td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+function renderAdminRides(ca){
+  const rides=DB.get('rides');
+  ca.innerHTML=`
+  <div class="card">
+    <div class="card-header"><div class="card-title">All rides</div><span class="badge b-green">${rides.length} total</span></div>
+    <table class="data-table">
+      <thead><tr><th>ID</th><th>Passenger</th><th>Rider</th><th>From</th><th>To</th><th>Fare</th><th>Time</th><th>Status</th><th>Rating</th></tr></thead>
+      <tbody>
+        ${rides.map(r=>`<tr>
+          <td style="color:var(--text3);font-size:11px">${r.id}</td>
+          <td style="color:var(--text)">${r.passenger}</td>
+          <td>${r.rider}</td>
+          <td>${r.from}</td>
+          <td>${r.to}</td>
+          <td style="color:var(--green);font-weight:600">GH₵${r.fare}</td>
+          <td style="color:var(--text3)">${r.time}</td>
+          <td><span class="badge ${r.status==='active'?'b-amber':r.status==='completed'?'b-green':'b-blue'}">${r.status}</span></td>
+          <td style="color:var(--amber)">${r.rating?'★'.repeat(r.rating):'-'}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function renderAdminRiders(ca){
+  const riders=DB.get('riders').filter(r=>r.approved);
+  const statusColor={online:'b-green',riding:'b-amber',offline:'b-gray',pending:'b-blue'};
+  ca.innerHTML=`
+  <div class="card">
+    <div class="card-header"><div class="card-title">Approved riders</div><span class="badge b-green">${riders.length} riders</span></div>
+    <table class="data-table">
+      <thead><tr><th>Name</th><th>Email</th><th>Plate</th><th>Rating</th><th>Trips</th><th>Earnings</th><th>Status</th></tr></thead>
+      <tbody>
+        ${riders.map(r=>`<tr>
+          <td style="color:var(--text);font-weight:500">${r.name}</td>
+          <td style="color:var(--text3)">${r.email}</td>
+          <td style="font-family:'Syne',sans-serif;font-size:11px;color:var(--text2)">${r.plate}</td>
+          <td style="color:var(--amber)">★ ${r.rating}</td>
+          <td>${r.trips}</td>
+          <td style="color:var(--green)">GH₵ ${r.earnings.toLocaleString()}</td>
+          <td><span class="badge ${statusColor[r.status]||'b-gray'}">${r.status}</span></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function renderAdminPassengers(ca){
+  const pax=DB.get('passengers');
+  ca.innerHTML=`
+  <div class="card">
+    <div class="card-header"><div class="card-title">All passengers</div><span class="badge b-blue">${pax.length} users</span></div>
+    <table class="data-table">
+      <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Total trips</th><th>Joined</th></tr></thead>
+      <tbody>
+        ${pax.map(p=>`<tr>
+          <td style="color:var(--text);font-weight:500">${p.name}</td>
+          <td style="color:var(--text3)">${p.email}</td>
+          <td style="color:var(--text2)">${p.phone}</td>
+          <td style="color:var(--green);font-weight:600">${p.trips}</td>
+          <td style="color:var(--text3)">${p.joined}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function renderAdminOnboarding(ca){
+  const pending=DB.get('riders').filter(r=>!r.approved);
+  ca.innerHTML=`
+  <div class="metrics-row three">
+    <div class="metric"><div class="metric-label">Pending review</div><div class="metric-val">${pending.length}</div><div class="metric-sub">applications</div></div>
+    <div class="metric"><div class="metric-label">Approved this month</div><div class="metric-val">8</div><div class="metric-sub up">↑ 2 vs last month</div></div>
+    <div class="metric"><div class="metric-label">Rejected</div><div class="metric-val">3</div><div class="metric-sub">this month</div></div>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-title">Pending applications</div><span class="badge b-amber">${pending.length} pending</span></div>
+    ${pending.length===0?'<div style="text-align:center;padding:20px;color:var(--text3)">No pending applications</div>':
+    pending.map(r=>`
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);last:border-none">
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--blue-bg);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--blue)">${r.name.split(' ').map(x=>x[0]).join('')}</div>
+        <div style="flex:1">
+          <div style="font-weight:500;color:var(--text);font-size:13px">${r.name}</div>
+          <div style="font-size:11px;color:var(--text3)">${r.email} · ${r.plate}</div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-approve" onclick="approveRider('${r.id}')"><i class="ti ti-check"></i> Approve</button>
+          <button class="btn btn-reject" onclick="rejectRider('${r.id}')"><i class="ti ti-x"></i> Reject</button>
+        </div>
+      </div>`).join('')}
+  </div>`;
+}
+
+function approveRider(id){
+  const riders=DB.get('riders');
+  const r=riders.find(x=>x.id===id);
+  if(r){r.approved=true;r.status='offline';DB.set('riders',riders);}
+  showToast('Rider approved!');
+  renderScreen('onboarding');
+}
+function rejectRider(id){
+  const riders=DB.get('riders').filter(x=>x.id!==id);
+  DB.set('riders',riders);
+  showToast('Rider rejected.');
+  renderScreen('onboarding');
+}
+
+function renderAdminAnalytics(ca){
+  const bars=[36,44,30,50,56,48,60];
+  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  ca.innerHTML=`
+  <div class="metrics-row">
+    <div class="metric"><div class="metric-label">This week trips</div><div class="metric-val">1,428</div><div class="metric-sub up">↑ 12%</div></div>
+    <div class="metric"><div class="metric-label">Week revenue</div><div class="metric-val">GH₵ 11,240</div><div class="metric-sub up">↑ 9%</div></div>
+    <div class="metric"><div class="metric-label">Avg fare</div><div class="metric-val">GH₵ 18.6</div><div class="metric-sub">per trip</div></div>
+    <div class="metric"><div class="metric-label">Avg rating</div><div class="metric-val">4.8 ★</div><div class="metric-sub">across all riders</div></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-header"><div class="card-title">Daily trips — this week</div></div>
+      <div class="chart-bars">
+        ${bars.map((h,i)=>`<div class="bar-col"><div class="bar${i===6?' highlight':''}" style="height:${h}px"></div><div class="bar-lbl">${days[i]}</div></div>`).join('')}
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Revenue by day</div></div>
+      <div class="chart-bars">
+        ${[1100,1350,900,1540,1720,1480,1840].map((h,i)=>`<div class="bar-col"><div class="bar${i===6?' highlight':''}" style="height:${Math.round(h/30)}px"></div><div class="bar-lbl">${days[i]}</div></div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ─── RIDER SCREENS ───────────────────────────────────────────────
+let riderOnline=false;
+let activeRequest=null;
+
+function renderRiderHome(ca){
+  const rider=DB.get('riders').find(r=>r.id===currentUser.id)||DB.get('riders')[0];
+  ca.innerHTML=`
+  <div class="status-header">
+    <div>
+      <div class="online-indicator">
+        <div class="online-dot${riderOnline?'':' off'}"></div>
+        <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:14px">${riderOnline?'You are online':'You are offline'}</span>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:3px">${riderOnline?'Accepting ride requests':'Toggle to start receiving rides'}</div>
+    </div>
+    <label class="toggle">
+      <input type="checkbox" ${riderOnline?'checked':''} onchange="toggleRiderOnline(this)"/>
+      <div class="toggle-slider"></div>
+    </label>
+  </div>
+  <div class="metrics-row three">
+    <div class="metric"><div class="metric-label">Today's trips</div><div class="metric-val">7</div><div class="metric-sub up">↑ 2 vs yesterday</div></div>
+    <div class="metric"><div class="metric-label">Today's earnings</div><div class="metric-val">GH₵ 112</div><div class="metric-sub up">Goal: GH₵ 200</div></div>
+    <div class="metric"><div class="metric-label">Rating</div><div class="metric-val">4.9 ★</div><div class="metric-sub">from ${rider.trips} trips</div></div>
+  </div>
+  ${riderOnline&&!activeRequest?`
+  <div class="card" id="incoming-area">
+    <div class="card-header"><div class="card-title">Incoming request</div><span class="badge b-amber">New</span></div>
+    <div class="ride-request-card">
+      <div class="rrc-header"><div class="rrc-id">#1043 · 2 min ago</div><div class="rrc-fare">GH₵ 22</div></div>
+      <div class="rrc-route">
+        <div class="rrc-from"><i class="ti ti-map-pin"></i> Osu, Accra</div>
+        <div class="rrc-to"><i class="ti ti-flag"></i> Kotoka Airport</div>
+      </div>
+      <div class="rrc-meta">
+        <div class="rrc-chip"><i class="ti ti-road"></i> 4.2 km</div>
+        <div class="rrc-chip"><i class="ti ti-clock"></i> ~14 min</div>
+        <div class="rrc-chip"><i class="ti ti-user"></i> Efua O.</div>
+      </div>
+      <div class="rrc-actions">
+        <button class="btn btn-green" onclick="acceptRide()"><i class="ti ti-check"></i> Accept</button>
+        <button class="btn btn-danger" onclick="declineRide()"><i class="ti ti-x"></i> Decline</button>
+      </div>
+    </div>
+  </div>`:''}
+  ${activeRequest?`
+  <div class="trip-banner">
+    <div class="trip-banner-header">
+      <div class="trip-stage">Trip in progress</div>
+      <div class="trip-timer" id="trip-timer">00:00</div>
+    </div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:10px">Passenger: <strong style="color:var(--text)">Efua Owusu</strong> · GH₵ 22</div>
+    <div class="rrc-route" style="margin-bottom:12px">
+      <div class="rrc-from"><i class="ti ti-map-pin"></i> Osu, Accra</div>
+      <div class="rrc-to"><i class="ti ti-flag"></i> Kotoka Airport</div>
+    </div>
+    <button class="btn btn-green" onclick="completeRide()" style="width:100%;justify-content:center"><i class="ti ti-check"></i> Complete trip</button>
+  </div>`:''}
+  <div class="card">
+    <div class="card-header"><div class="card-title">Today's route summary</div></div>
+    <div class="map-box">
+      <svg width="100%" height="100%" style="position:absolute;inset:0">
+        <rect width="100%" height="100%" fill="#1a1e26"/>
+        <polyline points="40,160 80,100 150,100 220,60 300,60 380,30" fill="none" stroke="var(--green)" stroke-width="2" stroke-dasharray="6,4" opacity=".7"/>
+        <line x1="0" y1="100" x2="100%" y2="100" stroke="#2a303d" stroke-width="1.5"/>
+        <line x1="150" y1="0" x2="150" y2="100%" stroke="#2a303d" stroke-width="1.5"/>
+      </svg>
+      <div class="map-pin" style="left:11%;top:88%"><div class="pin-dot" style="background:var(--blue)"></div></div>
+      <div class="map-pin" style="left:58%;top:35%"><div class="pin-dot" style="background:var(--amber)"></div></div>
+      <div class="map-pin" style="left:90%;top:17%"><div class="pin-dot" style="background:var(--green)"></div></div>
+    </div>
+  </div>`;
+  if(activeRequest) startTimer();
+}
+
+let timerInterval=null;
+let timerSec=0;
+function startTimer(){
+  clearInterval(timerInterval);
+  timerInterval=setInterval(()=>{
+    timerSec++;
+    const el=document.getElementById('trip-timer');
+    if(el){const m=Math.floor(timerSec/60);const s=timerSec%60;el.textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;}
+    else clearInterval(timerInterval);
+  },1000);
+}
+
+function toggleRiderOnline(el){
+  riderOnline=el.checked;
+  showToast(riderOnline?'You are now online!':'You went offline.');
+  renderScreen('r-home');
+}
+function acceptRide(){activeRequest=true;showToast('Ride accepted! Navigate to passenger.');renderScreen('r-home');}
+function declineRide(){showToast('Ride declined.');renderScreen('r-home');}
+function completeRide(){
+  clearInterval(timerInterval);timerSec=0;activeRequest=null;
+  const rides=DB.get('rides');
+  rides.unshift({id:'#1043',passenger:'Efua Owusu',rider:'Kofi Asante',from:'Osu',to:'Airport',fare:22,status:'completed',time:new Date().toTimeString().slice(0,5),rating:null});
+  DB.set('rides',rides);
+  const stats=DB.get('stats');stats.trips++;stats.revenue+=22;DB.set('stats',stats);
+  showToast('Trip completed! GH₵ 22 earned.');
+  renderScreen('r-home');
+}
+
+function renderRiderRides(ca){
+  const rides=DB.get('rides').filter(r=>r.rider==='Kofi Asante');
+  ca.innerHTML=`
+  <div class="card">
+    <div class="card-header"><div class="card-title">My ride history</div><span class="badge b-green">${rides.length} trips</span></div>
+    <table class="data-table">
+      <thead><tr><th>ID</th><th>Passenger</th><th>From</th><th>To</th><th>Fare</th><th>Time</th><th>Rating</th></tr></thead>
+      <tbody>
+        ${rides.map(r=>`<tr>
+          <td style="color:var(--text3);font-size:11px">${r.id}</td>
+          <td style="color:var(--text)">${r.passenger}</td>
+          <td>${r.from}</td>
+          <td>${r.to}</td>
+          <td style="color:var(--green);font-weight:600">GH₵ ${r.fare}</td>
+          <td style="color:var(--text3)">${r.time}</td>
+          <td style="color:var(--amber)">${r.rating?'★'.repeat(r.rating):'-'}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function renderRiderEarnings(ca){
+  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const vals=[84,96,72,110,130,88,112];
+  ca.innerHTML=`
+  <div class="metrics-row two">
+    <div class="metric"><div class="metric-label">This week</div><div class="metric-val">GH₵ 692</div><div class="metric-sub up">↑ GH₵ 92 vs last week</div></div>
+    <div class="metric"><div class="metric-label">This month</div><div class="metric-val">GH₵ 2,840</div><div class="metric-sub">from 94 trips</div></div>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-title">Daily earnings — this week</div></div>
+    <div class="chart-bars">
+      ${vals.map((h,i)=>`<div class="bar-col">
+        <div class="bar${i===6?' highlight':''}" style="height:${Math.round(h/2)}px"></div>
+        <div class="bar-lbl">${days[i]}</div>
+      </div>`).join('')}
+    </div>
+    <div style="margin-top:12px;display:flex;justify-content:space-between;font-size:11px;color:var(--text3);padding:0 2px">
+      ${vals.map(v=>`<span>GH₵${v}</span>`).join('')}
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-title">Weekly goal</div><span class="badge b-green">69% complete</span></div>
+    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px">
+      <span style="color:var(--text2)">GH₵ 692 of GH₵ 1,000</span><span style="color:var(--green);font-weight:600">GH₵ 308 to go</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" style="width:69%"></div></div>
+  </div>`;
+}
+
+function renderRiderProfile(ca){
+  const rider=DB.get('riders').find(r=>r.id==='r1');
+  ca.innerHTML=`
+  <div class="card" style="text-align:center;padding:28px">
+    <div style="width:64px;height:64px;border-radius:50%;background:var(--amber-bg);border:2px solid var(--amber);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--amber);margin:0 auto 12px">${rider.name.split(' ').map(x=>x[0]).join('')}</div>
+    <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--text)">${rider.name}</div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:14px">${rider.plate}</div>
+    <div style="display:flex;gap:8px;justify-content:center">
+      <span class="badge b-green">Approved rider</span>
+      <span class="badge b-amber">★ ${rider.rating}</span>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-header"><div class="card-title">Contact info</div></div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:center;gap:8px"><i class="ti ti-mail" style="color:var(--text3);font-size:15px"></i><span style="font-size:13px;color:var(--text2)">${rider.email}</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><i class="ti ti-phone" style="color:var(--text3);font-size:15px"></i><span style="font-size:13px;color:var(--text2)">${rider.phone}</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Performance</div></div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--text2)">Total trips</span><span style="color:var(--text);font-weight:600">${rider.trips}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--text2)">Total earned</span><span style="color:var(--green);font-weight:600">GH₵ ${rider.earnings.toLocaleString()}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--text2)">Rating</span><span style="color:var(--amber);font-weight:600">★ ${rider.rating}</span></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ─── PASSENGER SCREENS ───────────────────────────────────────────
+let currentBooking=null;
+
+function renderPassengerHome(ca){
+  ca.innerHTML=`
+  ${currentBooking?`
+  <div class="trip-banner">
+    <div class="trip-banner-header">
+      <div class="trip-stage">${currentBooking.stage}</div>
+      <div class="trip-timer">GH₵ ${currentBooking.fare}</div>
+    </div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:10px">Rider: <strong style="color:var(--text)">${currentBooking.riderName}</strong> · ${currentBooking.plate} · ★ ${currentBooking.rating}</div>
+    <div class="rrc-route" style="margin-bottom:12px">
+      <div class="rrc-from"><i class="ti ti-map-pin"></i> ${currentBooking.from}</div>
+      <div class="rrc-to"><i class="ti ti-flag"></i> ${currentBooking.to}</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-outline" style="flex:1;justify-content:center" onclick="renderScreen('p-tracking')"><i class="ti ti-map-pin"></i> Track ride</button>
+      <button class="btn btn-danger" style="flex:1;justify-content:center" onclick="cancelBooking()"><i class="ti ti-x"></i> Cancel</button>
+    </div>
+  </div>`:`
+  <div class="card">
+    <div class="card-header"><div class="card-title">Where are you going?</div></div>
+    <div class="map-box" style="margin-bottom:14px">
+      <svg width="100%" height="100%" style="position:absolute;inset:0">
+        <rect width="100%" height="100%" fill="#1a1e26"/>
+        <line x1="0" y1="70" x2="100%" y2="70" stroke="#2a303d" stroke-width="1.5"/>
+        <line x1="0" y1="130" x2="100%" y2="130" stroke="#2a303d" stroke-width="1.5"/>
+        <line x1="100" y1="0" x2="100" y2="100%" stroke="#2a303d" stroke-width="1.5"/>
+        <line x1="240" y1="0" x2="240" y2="100%" stroke="#2a303d" stroke-width="1.5"/>
+        <line x1="370" y1="0" x2="370" y2="100%" stroke="#2a303d" stroke-width="1.5"/>
+      </svg>
+      <div class="map-pin" style="left:48%;top:52%">
+        <div class="pin-pulse" style="border-color:var(--green);opacity:.4"></div>
+        <div class="pin-dot" style="background:var(--green)"></div>
+      </div>
+      <div class="map-pin" style="left:28%;top:40%"><div class="pin-dot" style="background:var(--amber)"></div></div>
+      <div class="map-pin" style="left:68%;top:62%"><div class="pin-dot" style="background:var(--amber)"></div></div>
+    </div>
+    <div class="input-wrap">
+      <i class="ti ti-map-pin input-icon" style="color:var(--green)"></i>
+      <input class="dest-input" id="from-input" placeholder="Your location" value="Osu, Accra"/>
+    </div>
+    <div class="input-wrap">
+      <i class="ti ti-flag input-icon" style="color:var(--red)"></i>
+      <input class="dest-input" id="to-input" placeholder="Where to?" id="dest-input"/>
+    </div>
+    <div id="fare-preview" style="display:none" class="fare-box">
+      <div class="fare-row"><div class="fare-label">Estimated fare</div><div class="fare-val" id="est-fare">GH₵ —</div></div>
+      <div class="fare-row"><div class="fare-label">Distance</div><div class="fare-val" id="est-dist">— km</div></div>
+      <div class="fare-row"><div class="fare-label">ETA</div><div class="fare-val" id="est-eta">— min</div></div>
+      <div class="fare-row"><div class="fare-label">Payment</div><div class="fare-val">Mobile Money / Cash</div></div>
+    </div>
+    <button class="btn btn-outline" onclick="calcFare()" style="width:100%;justify-content:center;margin-bottom:8px"><i class="ti ti-calculator"></i> Get fare estimate</button>
+    <button class="btn btn-green" id="book-btn" onclick="bookRide()" style="width:100%;justify-content:center;display:none"><i class="ti ti-motorbike"></i> Request MotoGo</button>
+  </div>`}
+  <div class="card">
+    <div class="card-header"><div class="card-title">Nearby riders</div><span class="badge b-green">3 available</span></div>
+    ${DB.get('riders').filter(r=>r.status==='online').slice(0,3).map(r=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--amber-bg);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--amber)">${r.name.split(' ').map(x=>x[0]).join('')}</div>
+        <div style="flex:1"><div style="font-size:12px;font-weight:500;color:var(--text)">${r.name}</div><div style="font-size:10px;color:var(--text3)">${r.plate} · ★ ${r.rating}</div></div>
+        <span style="font-size:11px;color:var(--green)">~${Math.floor(Math.random()*5)+2} min</span>
+      </div>`).join('')}
+  </div>`;
+}
+
+function calcFare(){
+  const to=document.getElementById('to-input').value;
+  if(!to){showToast('Enter a destination first.');return;}
+  const fare=Math.floor(Math.random()*25)+8;
+  const dist=(Math.random()*8+1).toFixed(1);
+  const eta=Math.floor(dist*2.5)+5;
+  document.getElementById('fare-preview').style.display='block';
+  document.getElementById('est-fare').textContent=`GH₵ ${fare}`;
+  document.getElementById('est-dist').textContent=`${dist} km`;
+  document.getElementById('est-eta').textContent=`~${eta} min`;
+  document.getElementById('book-btn').style.display='flex';
+  window._fareData={fare,dist,eta,to};
+}
+
+function bookRide(){
+  const fd=window._fareData||{fare:18,to:'Kotoka Airport'};
+  const rider=DB.get('riders').find(r=>r.status==='online');
+  currentBooking={stage:'Rider en route',fare:fd.fare,from:'Osu, Accra',to:fd.to,riderName:rider.name,plate:rider.plate,rating:rider.rating};
+  const rides=DB.get('rides');
+  rides.unshift({id:'#1044',passenger:'Efua Owusu',rider:rider.name,from:'Osu',to:fd.to,fare:fd.fare,status:'active',time:new Date().toTimeString().slice(0,5),rating:null});
+  DB.set('rides',rides);
+  showToast('Ride requested! Matching you with a rider...');
+  renderScreen('p-home');
+}
+
+function cancelBooking(){currentBooking=null;showToast('Ride cancelled.');renderScreen('p-home');}
+
+function renderPassengerTracking(ca){
+  if(!currentBooking){
+    ca.innerHTML=`<div class="card" style="text-align:center;padding:28px"><i class="ti ti-map-pin" style="font-size:32px;color:var(--text3)"></i><div style="margin-top:10px;color:var(--text2)">No active ride to track.<br>Book a ride first.</div></div>`;
+    return;
+  }
+  ca.innerHTML=`
+  <div class="trip-banner">
+    <div class="trip-banner-header">
+      <div class="trip-stage">${currentBooking.stage}</div>
+      <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--text)">GH₵ ${currentBooking.fare}</div>
+    </div>
+    <div style="font-size:12px;color:var(--text2)">${currentBooking.from} → ${currentBooking.to}</div>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-title">Live tracking</div><span class="badge b-amber">En route</span></div>
+    <div class="map-box" style="height:220px">
+      <svg width="100%" height="100%" style="position:absolute;inset:0">
+        <rect width="100%" height="100%" fill="#1a1e26"/>
+        <line x1="0" y1="80" x2="100%" y2="80" stroke="#2a303d" stroke-width="2"/>
+        <line x1="100" y1="0" x2="100" y2="100%" stroke="#2a303d" stroke-width="2"/>
+        <line x1="280" y1="0" x2="280" y2="100%" stroke="#2a303d" stroke-width="2"/>
+        <polyline points="50,180 100,80 200,80 280,40 420,30" fill="none" stroke="var(--green)" stroke-width="2" stroke-dasharray="6,4" opacity=".7"/>
+      </svg>
+      <div class="map-pin" style="left:25%;top:44%">
+        <div class="pin-pulse" style="border-color:var(--amber);opacity:.5"></div>
+        <div class="pin-dot" style="background:var(--amber)"></div>
+      </div>
+      <div class="map-pin" style="left:66%;top:23%"><div class="pin-dot" style="background:var(--red)"></div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-title">Your rider</div></div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="width:44px;height:44px;border-radius:50%;background:var(--amber-bg);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:var(--amber)">${currentBooking.riderName.split(' ').map(x=>x[0]).join('')}</div>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:600;color:var(--text);font-family:'Syne',sans-serif">${currentBooking.riderName}</div>
+        <div style="font-size:11px;color:var(--text3)">${currentBooking.plate} · ★ ${currentBooking.rating}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--green)">3 min</div>
+        <div style="font-size:10px;color:var(--text3)">away</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn btn-outline" style="flex:1;justify-content:center" onclick="showToast('Calling rider...')"><i class="ti ti-phone"></i> Call rider</button>
+      <button class="btn btn-danger" style="flex:1;justify-content:center" onclick="cancelBooking()"><i class="ti ti-x"></i> Cancel</button>
+    </div>
+  </div>`;
+}
+
+function renderPassengerHistory(ca){
+  const rides=DB.get('rides').filter(r=>r.passenger==='Efua Owusu');
+  ca.innerHTML=`
+  <div class="metrics-row three">
+    <div class="metric"><div class="metric-label">Total rides</div><div class="metric-val">${rides.length}</div></div>
+    <div class="metric"><div class="metric-label">Total spent</div><div class="metric-val">GH₵ ${rides.reduce((a,r)=>a+r.fare,0)}</div></div>
+    <div class="metric"><div class="metric-label">Avg rating given</div><div class="metric-val">${(rides.filter(r=>r.rating).reduce((a,r)=>a+r.rating,0)/Math.max(rides.filter(r=>r.rating).length,1)).toFixed(1)} ★</div></div>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-title">Ride history</div></div>
+    <table class="data-table">
+      <thead><tr><th>ID</th><th>Rider</th><th>From</th><th>To</th><th>Fare</th><th>Time</th><th>Rating</th></tr></thead>
+      <tbody>
+        ${rides.map(r=>`<tr>
+          <td style="color:var(--text3);font-size:11px">${r.id}</td>
+          <td style="color:var(--text)">${r.rider}</td>
+          <td>${r.from}</td><td>${r.to}</td>
+          <td style="color:var(--green);font-weight:600">GH₵ ${r.fare}</td>
+          <td style="color:var(--text3)">${r.time}</td>
+          <td><div class="stars">${[1,2,3,4,5].map(i=>`<span class="star${r.rating&&i<=r.rating?' lit':''}" onclick="rateRide('${r.id}',${i})">★</span>`).join('')}</div></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function rateRide(id,n){
+  const rides=DB.get('rides');
+  const r=rides.find(x=>x.id===id);
+  if(r){r.rating=n;DB.set('rides',rides);}
+  showToast(`Rated ${n} stars!`);
+  renderScreen('p-history');
+}
+
+function renderPassengerProfile(ca){
+  const pax=DB.get('passengers').find(p=>p.id==='p1');
+  ca.innerHTML=`
+  <div class="card" style="text-align:center;padding:28px">
+    <div style="width:64px;height:64px;border-radius:50%;background:var(--green-bg);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--green);margin:0 auto 12px">${pax.name.split(' ').map(x=>x[0]).join('')}</div>
+    <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--text)">${pax.name}</div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:14px">Member since ${pax.joined}</div>
+    <span class="badge b-green">${pax.trips} rides taken</span>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-title">Contact info</div></div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:center;gap:8px"><i class="ti ti-mail" style="color:var(--text3);font-size:15px"></i><span style="font-size:13px;color:var(--text2)">${pax.email}</span></div>
+      <div style="display:flex;align-items:center;gap:8px"><i class="ti ti-phone" style="color:var(--text3);font-size:15px"></i><span style="font-size:13px;color:var(--text2)">${pax.phone}</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-title">Saved locations</div><button class="btn btn-outline" onclick="showToast('Add location feature coming soon!')"><i class="ti ti-plus"></i> Add</button></div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;align-items:center;gap:8px;padding:8px;background:var(--surface2);border-radius:8px"><i class="ti ti-home" style="color:var(--green);font-size:14px"></i><span style="font-size:12px;color:var(--text)">Home — Osu, Accra</span></div>
+      <div style="display:flex;align-items:center;gap:8px;padding:8px;background:var(--surface2);border-radius:8px"><i class="ti ti-briefcase" style="color:var(--blue);font-size:14px"></i><span style="font-size:12px;color:var(--text)">Work — Airport City, Accra</span></div>
+    </div>
+  </div>`;
+}
+
+// ─── UTILS ───────────────────────────────────────────────────────
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.style.display='block';
+  clearTimeout(window._toastTimer);
+  window._toastTimer=setTimeout(()=>t.style.display='none',2500);
+}
+</script>
+</body>
+</html>
