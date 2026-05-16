@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>MotoGO — Rider Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#09080b;--s1:#100f14;--s2:#18161f;--s3:#201e28;
+  --b1:#2a2733;--b2:#383450;
+  --t1:#f0eef5;--t2:#9490a8;--t3:#55506a;
+  --amber:#f5a623;--amber-dim:rgba(245,166,35,.13);--amber-deep:#8a5c0d;
+  --green:#22c97a;--green-dim:rgba(34,201,122,.1);
+  --red:#e84040;--red-dim:rgba(232,64,64,.12);
+  --blue:#4b9eff;--blue-dim:rgba(75,158,255,.12);
+  --accent:var(--amber);--accent-dim:var(--amber-dim);
+  --r:8px;--r2:12px;--r3:16px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t1);font-size:14px;min-height:100vh}
+h1,h2,h3,h4,.syne{font-family:'Syne',sans-serif}
+button{cursor:pointer;font-family:'DM Sans',sans-serif}
+input{font-family:'DM Sans',sans-serif}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--b1);border-radius:2px}
+
+/* Login */
+#login-page{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg);position:relative;overflow:hidden}
+.login-glow{position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(245,166,35,.07) 0%,transparent 70%);top:-80px;left:50%;transform:translateX(-50%);pointer-events:none}
+.login-card{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r3);padding:40px 36px;width:420px;position:relative;z-index:1}
+.login-brand{display:flex;align-items:center;gap:12px;margin-bottom:32px}
+.brand-icon{width:42px;height:42px;border-radius:10px;background:var(--amber);display:flex;align-items:center;justify-content:center}
+.brand-icon i{font-size:22px;color:#000}
+.brand-name{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.5px}
+.brand-name em{color:var(--amber);font-style:normal}
+.portal-tag{font-size:10px;font-weight:700;font-family:'Syne',sans-serif;text-transform:uppercase;letter-spacing:.1em;color:var(--amber);background:var(--amber-dim);padding:3px 9px;border-radius:20px;display:inline-block;margin-bottom:20px}
+.login-h{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;margin-bottom:6px}
+.login-sub{font-size:13px;color:var(--t2);margin-bottom:28px;line-height:1.5}
+.field{margin-bottom:16px}
+.field label{font-size:12px;font-weight:500;color:var(--t2);display:block;margin-bottom:6px}
+.field input{width:100%;background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);padding:11px 14px;color:var(--t1);font-size:13px;outline:none;transition:border .2s}
+.field input:focus{border-color:var(--amber)}
+.field input::placeholder{color:var(--t3)}
+.btn-login{width:100%;background:var(--amber);color:#000;font-family:'Syne',sans-serif;font-size:14px;font-weight:800;border:none;border-radius:var(--r);padding:13px;letter-spacing:.03em;transition:opacity .2s;margin-top:4px}
+.btn-login:hover{opacity:.85}
+.login-hint{font-size:11px;color:var(--t3);text-align:center;margin-top:16px;line-height:1.6}
+.login-hint b{color:var(--t2);font-weight:500}
+.login-links{display:flex;gap:10px;justify-content:center;margin-top:14px;font-size:11px;color:var(--t3)}
+.login-links a{color:var(--t2)}
+.err-msg{font-size:12px;color:var(--red);background:var(--red-dim);border:1px solid rgba(232,64,64,.2);border-radius:var(--r);padding:8px 12px;margin-bottom:14px;display:none}
+
+/* App */
+#app-page{display:none;flex-direction:row;min-height:100vh}
+.sidebar{width:220px;min-width:220px;background:var(--s1);border-right:1px solid var(--b1);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100}
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh}
+.sb-top{padding:20px 16px 16px;border-bottom:1px solid var(--b1)}
+.sb-brand{display:flex;align-items:center;gap:9px}
+.sb-brand-icon{width:30px;height:30px;border-radius:8px;background:var(--amber);display:flex;align-items:center;justify-content:center}
+.sb-brand-icon i{font-size:16px;color:#000}
+.sb-brand-name{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;letter-spacing:-.3px}
+.sb-brand-name em{color:var(--amber);font-style:normal}
+.sb-portal-tag{font-size:9px;font-weight:700;font-family:'Syne',sans-serif;text-transform:uppercase;letter-spacing:.1em;color:var(--amber);background:var(--amber-dim);padding:2px 8px;border-radius:20px;display:inline-block;margin-top:8px}
+.sb-nav{flex:1;padding:12px 8px;overflow-y:auto}
+.sb-sec{font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;padding:0 8px;margin-bottom:4px;margin-top:14px;font-family:'Syne',sans-serif}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--r);cursor:pointer;font-size:13px;color:var(--t2);transition:all .15s;margin-bottom:1px}
+.sb-item:hover{background:var(--s2);color:var(--t1)}
+.sb-item.active{background:var(--amber-dim);color:var(--amber)}
+.sb-item i{font-size:17px;min-width:20px}
+.sb-foot{padding:12px 8px;border-top:1px solid var(--b1)}
+.sb-user{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--r);background:var(--s2)}
+.sb-av{width:30px;height:30px;border-radius:50%;background:var(--amber-dim);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--amber);flex-shrink:0}
+.sb-uname{font-size:12px;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-uemail{font-size:10px;color:var(--t3)}
+.sb-logout{color:var(--t3);font-size:16px;padding:4px;flex-shrink:0;transition:color .15s;cursor:pointer}
+.sb-logout:hover{color:var(--red)}
+
+/* Topbar */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:15px 24px;background:var(--s1);border-bottom:1px solid var(--b1);position:sticky;top:0;z-index:50}
+.tb-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700}
+.tb-sub{font-size:11px;color:var(--t3);margin-top:2px}
+.tb-right{display:flex;align-items:center;gap:10px}
+.online-pill{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;font-family:'Syne',sans-serif;padding:5px 12px;border-radius:20px;transition:all .2s}
+.online-pill.on{background:var(--green-dim);color:var(--green)}
+.online-pill.off{background:var(--s2);color:var(--t2)}
+.online-dot{width:7px;height:7px;border-radius:50%}
+.online-dot.on{background:var(--green);animation:blink 1.4s infinite}
+.online-dot.off{background:var(--t3)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* Content */
+.content{padding:24px;flex:1;overflow-y:auto}
+.screen{display:none;animation:fadeUp .25s ease}
+.screen.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* Metrics */
+.metrics{display:grid;gap:14px;margin-bottom:22px}
+.m3{grid-template-columns:repeat(3,1fr)}
+.m2{grid-template-columns:repeat(2,1fr)}
+.metric{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r2);padding:18px}
+.metric-lbl{font-size:10px;font-weight:700;color:var(--t2);font-family:'Syne',sans-serif;text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px}
+.metric-val{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--t1);letter-spacing:-.5px}
+.metric-sub{font-size:11px;color:var(--t3);margin-top:4px}
+.up{color:var(--green)} .dn{color:var(--red)}
+
+/* Cards */
+.card{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r2);padding:18px;margin-bottom:18px}
+.card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.card-title{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t2)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid-2>.card{margin-bottom:0}
+
+/* Toggle */
+.toggle-wrap{display:flex;align-items:center;gap:12px}
+.toggle-label{font-family:'Syne',sans-serif;font-size:14px;font-weight:700}
+.toggle{position:relative;width:50px;height:26px;cursor:pointer;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.tog-slider{position:absolute;inset:0;background:var(--s3);border-radius:13px;transition:.3s;border:1px solid var(--b1)}
+.tog-slider:before{content:'';position:absolute;width:20px;height:20px;left:2px;top:2px;background:var(--t3);border-radius:50%;transition:.3s}
+.toggle input:checked+.tog-slider{background:var(--amber);border-color:var(--amber)}
+.toggle input:checked+.tog-slider:before{transform:translateX(24px);background:#000}
+
+/* Status header */
+.status-banner{background:linear-gradient(135deg,var(--amber-dim),rgba(245,166,35,.03));border:1px solid rgba(245,166,35,.25);border-radius:var(--r2);padding:18px 20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between}
+.status-info .status-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;margin-bottom:3px}
+.status-info .status-sub{font-size:12px;color:var(--t2)}
+
+/* Ride request card */
+.rr-card{background:var(--s1);border:1px solid var(--amber);border-radius:var(--r2);padding:18px;margin-bottom:18px;position:relative;overflow:hidden}
+.rr-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--amber)}
+.rr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.rr-id{font-family:'Syne',sans-serif;font-size:11px;color:var(--t3);font-weight:700}
+.rr-fare{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--amber)}
+.rr-route{background:var(--s2);border-radius:var(--r);padding:12px;margin-bottom:12px;display:flex;flex-direction:column;gap:6px}
+.rr-stop{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--t1)}
+.rr-stop i{font-size:14px;width:16px;text-align:center}
+.rr-chips{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.chip{background:var(--s2);border-radius:6px;padding:5px 10px;font-size:11px;color:var(--t2);display:inline-flex;align-items:center;gap:4px}
+.chip i{font-size:12px}
+.rr-actions{display:flex;gap:10px}
+
+/* Active trip banner */
+.trip-active{background:linear-gradient(135deg,rgba(34,201,122,.1),rgba(34,201,122,.03));border:1px solid rgba(34,201,122,.3);border-radius:var(--r2);padding:18px 20px;margin-bottom:20px}
+.trip-active-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.trip-stage{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--green)}
+.trip-timer{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--t1)}
+.trip-route{background:rgba(255,255,255,.03);border-radius:var(--r);padding:10px 12px;margin-bottom:12px;display:flex;flex-direction:column;gap:5px}
+.trip-stop{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--t2)}
+.trip-stop i{font-size:13px}
+
+/* Table */
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{text-align:left;font-size:10px;color:var(--t3);font-weight:700;font-family:'Syne',sans-serif;text-transform:uppercase;letter-spacing:.08em;padding:6px 12px;border-bottom:1px solid var(--b1)}
+.tbl td{padding:11px 12px;border-bottom:1px solid var(--b1);color:var(--t2);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tbody tr:hover td{background:rgba(255,255,255,.015)}
+.tbl-name{font-weight:500;color:var(--t1)}
+.tbl-mono{font-family:'Syne',sans-serif;font-size:11px;color:var(--t3)}
+
+/* Badges */
+.badge{font-size:10px;padding:3px 9px;border-radius:20px;font-weight:700;font-family:'Syne',sans-serif;white-space:nowrap;display:inline-block}
+.bg{background:var(--green-dim);color:var(--green)}
+.ba{background:var(--amber-dim);color:var(--amber)}
+.br{background:var(--red-dim);color:var(--red)}
+.bb{background:var(--blue-dim);color:var(--blue)}
+.bx{background:var(--s2);color:var(--t2)}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:var(--r);font-size:13px;font-weight:700;font-family:'Syne',sans-serif;border:1px solid transparent;transition:all .15s;letter-spacing:.02em}
+.btn-amber{background:var(--amber);color:#000;border-color:var(--amber)}
+.btn-amber:hover{opacity:.85}
+.btn-danger{background:var(--red-dim);color:var(--red);border-color:transparent}
+.btn-danger:hover{background:rgba(232,64,64,.2)}
+.btn-o{background:transparent;color:var(--t2);border-color:var(--b1)}
+.btn-o:hover{background:var(--s2);color:var(--t1)}
+.btn-green{background:var(--green);color:#000;border-color:var(--green)}
+.btn-green:hover{opacity:.85}
+
+/* Map */
+.map-box{height:190px;background:var(--s2);border-radius:var(--r);border:1px solid var(--b1);position:relative;overflow:hidden}
+.map-pin{position:absolute;transform:translate(-50%,-50%)}
+.pin{width:11px;height:11px;border-radius:50%;border:2px solid var(--bg)}
+.pin-ring{position:absolute;border-radius:50%;border:2px solid;animation:ping 2s infinite;opacity:.5}
+@keyframes ping{0%{transform:scale(1);opacity:.5}100%{transform:scale(2.6);opacity:0}}
+
+/* Bars */
+.bars{display:flex;align-items:flex-end;gap:5px;height:90px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar{width:100%;border-radius:3px 3px 0 0;background:var(--s3)}
+.bar.hi{background:var(--amber)}
+.bar-lbl{font-size:9px;color:var(--t3);font-family:'Syne',sans-serif}
+.bar-val{font-size:9px;color:var(--t3);font-family:'Syne',sans-serif;margin-top:2px}
+
+/* Progress */
+.prog-track{height:5px;background:var(--s3);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;border-radius:3px;background:var(--amber)}
+
+/* Profile avatar */
+.profile-av-wrap{text-align:center;padding:28px 0 20px}
+.profile-av{width:70px;height:70px;border-radius:50%;background:var(--amber-dim);border:2px solid var(--amber);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--amber);margin:0 auto 12px}
+.profile-name{font-family:'Syne',sans-serif;font-size:20px;font-weight:800}
+.profile-sub{font-size:12px;color:var(--t3);margin-top:4px}
+
+/* Info row */
+.info-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--b1)}
+.info-row:last-child{border-bottom:none}
+.info-row i{font-size:16px;color:var(--t3);min-width:20px}
+.info-label{font-size:11px;color:var(--t3);margin-bottom:1px}
+.info-val{font-size:13px;color:var(--t1)}
+
+/* Toast */
+#toast{position:fixed;bottom:24px;right:24px;background:var(--s1);border:1px solid var(--amber);color:var(--amber);padding:11px 18px;border-radius:var(--r);font-size:12px;font-weight:700;font-family:'Syne',sans-serif;display:none;z-index:9999;box-shadow:0 4px 24px rgba(0,0,0,.4);animation:fadeUp .2s}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-page">
+  <div class="login-glow"></div>
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="brand-icon"><i class="ti ti-motorbike"></i></div>
+      <div class="brand-name">Moto<em>GO</em></div>
+    </div>
+    <div class="portal-tag"><i class="ti ti-motorbike" style="font-size:10px"></i> Rider Portal</div>
+    <div class="login-h">Rider sign in</div>
+    <div class="login-sub">Access your dashboard, manage rides, and track your earnings in real time.</div>
+    <div class="err-msg" id="err">Invalid credentials.</div>
+    <div class="field"><label>Email address</label><input type="email" id="l-email" value="kofi@motogo.com" placeholder="you@motogo.com"/></div>
+    <div class="field"><label>Password</label><input type="password" id="l-pass" value="rider123" placeholder="••••••••"/></div>
+    <button class="btn-login" onclick="doLogin()">Sign in to Rider Portal</button>
+    <div class="login-hint">Demo: <b>kofi@motogo.com</b> / <b>rider123</b></div>
+    <div class="login-links">
+      <a href="admin.html">→ Admin portal</a>
+      <a href="passenger.html">→ Passenger portal</a>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app-page">
+  <div class="sidebar">
+    <div class="sb-top">
+      <div class="sb-brand">
+        <div class="sb-brand-icon"><i class="ti ti-motorbike"></i></div>
+        <div class="sb-brand-name">Moto<em>GO</em></div>
+      </div>
+      <div class="sb-portal-tag"><i class="ti ti-motorbike" style="font-size:9px"></i> Rider Portal</div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-sec">Ride</div>
+      <div class="sb-item active" data-screen="home"><i class="ti ti-home"></i>Home</div>
+      <div class="sb-item" data-screen="history"><i class="ti ti-route"></i>Ride history</div>
+      <div class="sb-sec">Money</div>
+      <div class="sb-item" data-screen="earnings"><i class="ti ti-currency-dollar"></i>Earnings</div>
+      <div class="sb-sec">Account</div>
+      <div class="sb-item" data-screen="profile"><i class="ti ti-user"></i>My profile</div>
+    </nav>
+    <div class="sb-foot">
+      <div class="sb-user">
+        <div class="sb-av" id="sb-av">KA</div>
+        <div style="flex:1;min-width:0">
+          <div class="sb-uname" id="sb-name">Kofi Asante</div>
+          <div class="sb-uemail" id="sb-email">kofi@motogo.com</div>
+        </div>
+        <i class="ti ti-logout sb-logout" onclick="doLogout()" title="Logout"></i>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <div class="tb-title" id="tb-title">Home</div>
+        <div class="tb-sub" id="tb-sub">Accra, Ghana</div>
+      </div>
+      <div class="tb-right">
+        <div class="online-pill off" id="online-pill"><div class="online-dot off" id="online-dot"></div><span id="online-label">Offline</span></div>
+      </div>
+    </div>
+    <div class="content">
+      <div class="screen active" id="screen-home"></div>
+      <div class="screen" id="screen-history"></div>
+      <div class="screen" id="screen-earnings"></div>
+      <div class="screen" id="screen-profile"></div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<script src="db.js"></script>
+<script>
+// ── State ────────────────────────────────────────────────────────
+let session = null;
+let riderData = null;
+let isOnline = false;
+let activeRide = null;
+let timerSec = 0;
+let timerInterval = null;
+
+// ── Auth ─────────────────────────────────────────────────────────
+function doLogin() {
+  const email = document.getElementById('l-email').value.trim();
+  const pass  = document.getElementById('l-pass').value;
+  const res   = MotoDB.login(email, pass);
+  if (!res.success || res.user.role !== 'rider') {
+    const el = document.getElementById('err');
+    el.style.display = 'block';
+    el.textContent = res.success ? 'Access denied — this portal is for riders only.' : res.error;
+    return;
+  }
+  session = res.user;
+  riderData = MotoDB.getRiderByUserId(session.userId);
+  if (!riderData || !riderData.approved) {
+    const el = document.getElementById('err');
+    el.style.display = 'block';
+    el.textContent = 'Your account is pending approval by admin.';
+    MotoDB.logout();
+    return;
+  }
+  document.getElementById('login-page').style.display = 'none';
+  document.getElementById('app-page').style.display   = 'flex';
+  initApp();
+}
+
+function doLogout() { MotoDB.logout(); location.reload(); }
+['l-email','l-pass'].forEach(id => {
+  document.getElementById(id)?.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+});
+
+// ── Init ─────────────────────────────────────────────────────────
+function initApp() {
+  document.getElementById('sb-name').textContent  = riderData.name;
+  document.getElementById('sb-email').textContent = session.email;
+  document.getElementById('sb-av').textContent    = riderData.name.split(' ').map(x => x[0]).join('').slice(0, 2);
+  document.querySelectorAll('.sb-item[data-screen]').forEach(el => {
+    el.addEventListener('click', () => {
+      document.querySelectorAll('.sb-item').forEach(x => x.classList.remove('active'));
+      el.classList.add('active');
+      document.getElementById('tb-title').textContent = el.textContent.trim();
+      renderScreen(el.dataset.screen);
+    });
+  });
+  updateOnlinePill();
+  renderScreen('home');
+}
+
+function updateOnlinePill() {
+  const pill  = document.getElementById('online-pill');
+  const dot   = document.getElementById('online-dot');
+  const label = document.getElementById('online-label');
+  if (isOnline) {
+    pill.className  = 'online-pill on';
+    dot.className   = 'online-dot on';
+    label.textContent = 'Online';
+  } else {
+    pill.className  = 'online-pill off';
+    dot.className   = 'online-dot off';
+    label.textContent = 'Offline';
+  }
+}
+
+// ── Screen router ────────────────────────────────────────────────
+function renderScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById('screen-' + id);
+  if (!el) return;
+  el.classList.add('active');
+  const map = { home: renderHome, history: renderHistory, earnings: renderEarnings, profile: renderProfile };
+  if (map[id]) map[id](el);
+}
+
+// ── Home ─────────────────────────────────────────────────────────
+function renderHome(el) {
+  const todayRides = MotoDB.getRides({ riderId: riderData.id }).filter(r => r.date === new Date().toISOString().slice(0, 10) || r.date === '2024-05-14');
+  const todayEarnings = todayRides.reduce((a, r) => a + (r.status === 'completed' ? r.fare : 0), 0);
+  el.innerHTML = `
+  <div class="status-banner">
+    <div class="status-info">
+      <div class="status-title">${isOnline ? '🟢 You are online' : '⚫ You are offline'}</div>
+      <div class="status-sub">${isOnline ? 'You are visible to passengers and receiving requests.' : 'Toggle to start accepting ride requests.'}</div>
+    </div>
+    <label class="toggle">
+      <input type="checkbox" ${isOnline ? 'checked' : ''} onchange="toggleOnline(this)"/>
+      <div class="tog-slider"></div>
+    </label>
+  </div>
+
+  <div class="metrics m3">
+    <div class="metric">
+      <div class="metric-lbl">Today's trips</div>
+      <div class="metric-val">${todayRides.filter(r => r.status === 'completed').length}</div>
+      <div class="metric-sub up">↑ 2 vs yesterday</div>
+    </div>
+    <div class="metric">
+      <div class="metric-lbl">Today's earnings</div>
+      <div class="metric-val">GH₵ ${todayEarnings}</div>
+      <div class="metric-sub" style="color:var(--amber)">Goal: GH₵ 200</div>
+    </div>
+    <div class="metric">
+      <div class="metric-lbl">Rating</div>
+      <div class="metric-val">${riderData.rating} ★</div>
+      <div class="metric-sub">${riderData.trips} total trips</div>
+    </div>
+  </div>
+
+  ${activeRide ? renderActiveTripBanner() : ''}
+
+  ${isOnline && !activeRide ? `
+  <div class="rr-card">
+    <div class="rr-top">
+      <div>
+        <div class="rr-id">RIDE REQUEST · #RD1043</div>
+        <div style="font-size:11px;color:var(--t3);margin-top:2px">Incoming · 2 minutes ago</div>
+      </div>
+      <div class="rr-fare">GH₵ 22</div>
+    </div>
+    <div class="rr-route">
+      <div class="rr-stop"><i class="ti ti-map-pin" style="color:var(--green)"></i>Osu, Accra</div>
+      <div class="rr-stop"><i class="ti ti-flag" style="color:var(--red)"></i>Kotoka Airport, Accra</div>
+    </div>
+    <div class="rr-chips">
+      <span class="chip"><i class="ti ti-road"></i>4.2 km</span>
+      <span class="chip"><i class="ti ti-clock"></i>~14 min</span>
+      <span class="chip"><i class="ti ti-user"></i>Efua Owusu</span>
+      <span class="chip"><i class="ti ti-star"></i>4.8 passenger</span>
+    </div>
+    <div class="rr-actions">
+      <button class="btn btn-amber" style="flex:1;justify-content:center" onclick="acceptRide()"><i class="ti ti-check"></i> Accept ride</button>
+      <button class="btn btn-danger" style="flex:1;justify-content:center" onclick="declineRide()"><i class="ti ti-x"></i> Decline</button>
+    </div>
+  </div>` : ''}
+
+  ${!isOnline && !activeRide ? `
+  <div class="card" style="text-align:center;padding:32px">
+    <i class="ti ti-moon" style="font-size:36px;color:var(--t3);display:block;margin-bottom:12px"></i>
+    <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:6px">You're offline</div>
+    <div style="font-size:13px;color:var(--t2)">Toggle the switch above to go online and start receiving ride requests.</div>
+  </div>` : ''}
+
+  <div class="card">
+    <div class="card-hd"><div class="card-title">Recent notifications</div></div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      ${[
+        {icon:'ti-cash',color:'var(--green)',text:'GH₵ 18 received for trip to Airport','time':'9:14 AM'},
+        {icon:'ti-star',color:'var(--amber)',text:'Efua O. rated you 5 stars ★★★★★','time':'9:20 AM'},
+        {icon:'ti-motorbike',color:'var(--blue)',text:'You completed 7 trips today — great work!','time':'8:50 AM'},
+      ].map(n => `
+      <div style="display:flex;gap:10px;align-items:flex-start">
+        <div style="width:32px;height:32px;border-radius:var(--r);background:var(--s2);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <i class="ti ${n.icon}" style="font-size:15px;color:${n.color}"></i>
+        </div>
+        <div>
+          <div style="font-size:12px;color:var(--t1);line-height:1.4">${n.text}</div>
+          <div style="font-size:10px;color:var(--t3);margin-top:2px">${n.time}</div>
+        </div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+
+  if (activeRide) startTimer();
+}
+
+function renderActiveTripBanner() {
+  return `
+  <div class="trip-active">
+    <div class="trip-active-hd">
+      <div class="trip-stage"><i class="ti ti-circle-filled" style="font-size:8px;vertical-align:1px;margin-right:4px"></i>Trip in progress</div>
+      <div class="trip-timer" id="trip-timer">00:00</div>
+    </div>
+    <div style="font-size:12px;color:var(--t2);margin-bottom:10px">
+      Passenger: <strong style="color:var(--t1)">Efua Owusu</strong> &nbsp;·&nbsp; Fare: <strong style="color:var(--amber)">GH₵ 22</strong>
+    </div>
+    <div class="trip-route">
+      <div class="trip-stop"><i class="ti ti-map-pin" style="color:var(--green)"></i><span>Osu, Accra</span></div>
+      <div class="trip-stop"><i class="ti ti-flag" style="color:var(--red)"></i><span>Kotoka Airport</span></div>
+    </div>
+    <button class="btn btn-green" style="width:100%;justify-content:center" onclick="completeRide()">
+      <i class="ti ti-check"></i> Complete trip & collect GH₵ 22
+    </button>
+  </div>`;
+}
+
+function toggleOnline(cb) {
+  isOnline = cb.checked;
+  MotoDB.updateRider(riderData.id, { status: isOnline ? 'online' : 'offline' });
+  updateOnlinePill();
+  toast(isOnline ? '🟢 You are now online!' : '⚫ You went offline.');
+  renderScreen('home');
+}
+
+function acceptRide() {
+  activeRide = { id: 'RD1043', passenger: 'Efua Owusu', from: 'Osu', to: 'Kotoka Airport', fare: 22 };
+  MotoDB.updateRider(riderData.id, { status: 'riding' });
+  toast('Ride accepted! Navigate to passenger.');
+  renderScreen('home');
+}
+
+function declineRide() {
+  toast('Ride declined.');
+  renderScreen('home');
+}
+
+function completeRide() {
+  clearInterval(timerInterval);
+  const duration = timerSec;
+  timerSec = 0;
+  const ride = MotoDB.createRide({
+    passengerId:   'p1',
+    passengerName: 'Efua Owusu',
+    riderId:       riderData.id,
+    riderName:     riderData.name,
+    from:          activeRide.from,
+    to:            activeRide.to,
+    fare:          activeRide.fare,
+  });
+  MotoDB.completeRide(ride.id, { duration: Math.round(duration / 60) || 14 });
+  riderData = MotoDB.getRiderByUserId(session.userId); // refresh
+  activeRide = null;
+  MotoDB.updateRider(riderData.id, { status: 'online' });
+  toast(`✅ Trip complete! GH₵ ${activeRide?.fare || 22} added to earnings.`);
+  renderScreen('home');
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    timerSec++;
+    const el = document.getElementById('trip-timer');
+    if (el) {
+      const m = Math.floor(timerSec / 60);
+      const s = timerSec % 60;
+      el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    } else {
+      clearInterval(timerInterval);
+    }
+  }, 1000);
+}
+
+// ── History ──────────────────────────────────────────────────────
+function renderHistory(el) {
+  const rides = MotoDB.getRides({ riderId: riderData.id });
+  const total = rides.length;
+  const earned = rides.filter(r => r.status === 'completed').reduce((a, r) => a + r.fare, 0);
+  const avgRating = rides.filter(r => r.rating).reduce((a, r) => a + r.rating, 0) / Math.max(rides.filter(r => r.rating).length, 1);
+
+  el.innerHTML = `
+  <div class="metrics m3">
+    <div class="metric"><div class="metric-lbl">Total rides</div><div class="metric-val">${total}</div></div>
+    <div class="metric"><div class="metric-lbl">Total earned</div><div class="metric-val">GH₵ ${earned}</div></div>
+    <div class="metric"><div class="metric-lbl">Avg passenger rating</div><div class="metric-val">${avgRating.toFixed(1)} ★</div></div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><div class="card-title">Ride history</div><span class="badge ba">${total} trips</span></div>
+    <table class="tbl">
+      <thead><tr><th>ID</th><th>Passenger</th><th>From</th><th>To</th><th>Fare</th><th>Duration</th><th>Date</th><th>Status</th><th>Rating</th></tr></thead>
+      <tbody>
+        ${rides.length === 0 ? '<tr><td colspan="9" style="text-align:center;color:var(--t3);padding:20px">No rides yet</td></tr>' :
+          rides.map(r => `<tr>
+            <td class="tbl-mono">${r.id}</td>
+            <td class="tbl-name">${r.passengerName}</td>
+            <td>${r.from}</td><td>${r.to}</td>
+            <td style="color:var(--amber);font-weight:700">GH₵ ${r.fare}</td>
+            <td style="color:var(--t3)">${r.duration ? r.duration + ' min' : '—'}</td>
+            <td class="tbl-mono">${r.date}</td>
+            <td><span class="badge ${r.status === 'completed' ? 'bg' : r.status === 'active' ? 'ba' : 'br'}">${r.status}</span></td>
+            <td style="color:var(--amber)">${r.rating ? '★'.repeat(r.rating) : '—'}</td>
+          </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+// ── Earnings ─────────────────────────────────────────────────────
+function renderEarnings(el) {
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const vals = [84, 96, 72, 110, 130, 88, 112];
+  const maxV = Math.max(...vals);
+  const weekTotal = vals.reduce((a, b) => a + b, 0);
+  const weekGoal  = 1000;
+  const pct = Math.round(weekTotal / weekGoal * 100);
+
+  el.innerHTML = `
+  <div class="metrics m2">
+    <div class="metric">
+      <div class="metric-lbl">This week</div>
+      <div class="metric-val">GH₵ ${weekTotal}</div>
+      <div class="metric-sub up">↑ GH₵ 92 vs last week</div>
+    </div>
+    <div class="metric">
+      <div class="metric-lbl">All time</div>
+      <div class="metric-val">GH₵ ${riderData.earnings.toLocaleString()}</div>
+      <div class="metric-sub">${riderData.trips} total trips</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd"><div class="card-title">Weekly earnings goal</div><span class="badge ba">${pct}% complete</span></div>
+    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:8px">
+      <span style="color:var(--t2)">GH₵ ${weekTotal} of GH₵ ${weekGoal}</span>
+      <span style="color:var(--amber);font-weight:700">GH₵ ${weekGoal - weekTotal} to go</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd"><div class="card-title">Daily earnings — this week</div></div>
+    <div class="bars">
+      ${vals.map((h, i) => `
+      <div class="bar-col">
+        <div class="bar${i === 6 ? ' hi' : ''}" style="height:${Math.round(h / maxV * 78)}px"></div>
+        <div class="bar-lbl">${days[i]}</div>
+      </div>`).join('')}
+    </div>
+    <div style="display:flex;gap:4px;margin-top:8px">
+      ${vals.map((v, i) => `<div style="flex:1;text-align:center;font-size:9px;color:var(--t3);font-family:'Syne',sans-serif">${v}</div>`).join('')}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd"><div class="card-title">Earnings breakdown</div></div>
+    <table class="tbl">
+      <thead><tr><th>Day</th><th>Trips</th><th>Earnings</th><th>Avg per trip</th></tr></thead>
+      <tbody>
+        ${days.map((d, i) => `<tr>
+          <td class="tbl-name">${d}</td>
+          <td>${Math.round(vals[i] / 14)}</td>
+          <td style="color:var(--amber);font-weight:700">GH₵ ${vals[i]}</td>
+          <td style="color:var(--t2)">GH₵ ${(vals[i] / Math.max(Math.round(vals[i] / 14), 1)).toFixed(0)}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+// ── Profile ──────────────────────────────────────────────────────
+function renderProfile(el) {
+  const user = (MotoDB.get('users') || []).find(u => u.id === riderData.userId) || {};
+  el.innerHTML = `
+  <div class="card">
+    <div class="profile-av-wrap">
+      <div class="profile-av">${riderData.name.split(' ').map(x => x[0]).join('')}</div>
+      <div class="profile-name">${riderData.name}</div>
+      <div class="profile-sub">${riderData.plate}</div>
+      <div style="display:flex;gap:8px;justify-content:center;margin-top:12px">
+        <span class="badge bg">Approved rider</span>
+        <span class="badge ba">★ ${riderData.rating} rating</span>
+        <span class="badge bb">${riderData.trips} trips</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-hd"><div class="card-title">Contact info</div></div>
+      <div class="info-row">
+        <i class="ti ti-mail"></i>
+        <div><div class="info-label">Email</div><div class="info-val">${user.email || '—'}</div></div>
+      </div>
+      <div class="info-row">
+        <i class="ti ti-phone"></i>
+        <div><div class="info-label">Phone</div><div class="info-val">${user.phone || '—'}</div></div>
+      </div>
+      <div class="info-row">
+        <i class="ti ti-id"></i>
+        <div><div class="info-label">Plate number</div><div class="info-val" style="font-family:'Syne',sans-serif">${riderData.plate}</div></div>
+      </div>
+      <div class="info-row">
+        <i class="ti ti-calendar"></i>
+        <div><div class="info-label">Joined</div><div class="info-val">${riderData.joinedDate}</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><div class="card-title">Performance</div></div>
+      <div class="info-row">
+        <i class="ti ti-route"></i>
+        <div><div class="info-label">Total trips</div><div class="info-val">${riderData.trips}</div></div>
+      </div>
+      <div class="info-row">
+        <i class="ti ti-currency-dollar"></i>
+        <div><div class="info-label">Total earned</div><div class="info-val" style="color:var(--amber)">GH₵ ${riderData.earnings.toLocaleString()}</div></div>
+      </div>
+      <div class="info-row">
+        <i class="ti ti-star"></i>
+        <div><div class="info-label">Average rating</div><div class="info-val" style="color:var(--amber)">★ ${riderData.rating}</div></div>
+      </div>
+      <div class="info-row">
+        <i class="ti ti-shield-check"></i>
+        <div><div class="info-label">Account status</div><div class="info-val" style="color:var(--green)">Approved</div></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── Toast ────────────────────────────────────────────────────────
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.display = 'block';
+  clearTimeout(window._t);
+  window._t = setTimeout(() => t.style.display = 'none', 2800);
+}
+
+// ── Auto-login ───────────────────────────────────────────────────
+(function () {
+  const s = MotoDB.getSession();
+  if (s && s.role === 'rider') {
+    session = s;
+    riderData = MotoDB.getRiderByUserId(s.userId);
+    if (riderData && riderData.approved) {
+      document.getElementById('login-page').style.display = 'none';
+      document.getElementById('app-page').style.display   = 'flex';
+      initApp();
+    }
+  }
+})();
+</script>
+</body>
+</html>

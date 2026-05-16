@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>MotoGO — Admin Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" rel="stylesheet"/>
+<style>
+/* ── Reset & Tokens ─────────────────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#08090b;--s1:#0f1117;--s2:#161b23;--s3:#1e2430;
+  --b1:#252d3a;--b2:#313d50;
+  --t1:#eef0f4;--t2:#8a93a8;--t3:#4e5870;
+  --green:#1fd87a;--green-dim:rgba(31,216,122,.12);--green-deep:#0d7a40;
+  --amber:#f5a623;--amber-dim:rgba(245,166,35,.12);
+  --red:#e84040;--red-dim:rgba(232,64,64,.12);
+  --blue:#4b9eff;--blue-dim:rgba(75,158,255,.12);
+  --r:8px;--r2:12px;--r3:16px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t1);font-size:14px;min-height:100vh;overflow-x:hidden}
+h1,h2,h3,h4,.syne{font-family:'Syne',sans-serif}
+button{cursor:pointer;font-family:'DM Sans',sans-serif}
+input,select{font-family:'DM Sans',sans-serif}
+a{color:inherit;text-decoration:none}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--b1);border-radius:2px}
+
+/* ── Layout ─────────────────────────────────────────────────── */
+#login-page,#app-page{min-height:100vh}
+#app-page{display:none;flex-direction:row}
+.sidebar{width:220px;min-width:220px;background:var(--s1);border-right:1px solid var(--b1);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100}
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh}
+
+/* ── Login ──────────────────────────────────────────────────── */
+#login-page{display:flex;align-items:center;justify-content:center;background:var(--bg);position:relative;overflow:hidden}
+.login-glow{position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(31,216,122,.06) 0%,transparent 70%);top:-100px;left:50%;transform:translateX(-50%);pointer-events:none}
+.login-card{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r3);padding:40px 36px;width:420px;position:relative;z-index:1}
+.login-brand{display:flex;align-items:center;gap:12px;margin-bottom:32px}
+.brand-icon{width:42px;height:42px;border-radius:10px;background:var(--green);display:flex;align-items:center;justify-content:center}
+.brand-icon i{font-size:22px;color:#000}
+.brand-name{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.5px}
+.brand-name em{color:var(--green);font-style:normal}
+.admin-tag{font-size:10px;font-weight:700;font-family:'Syne',sans-serif;text-transform:uppercase;letter-spacing:.1em;color:var(--blue);background:var(--blue-dim);padding:3px 9px;border-radius:20px;display:inline-block;margin-bottom:20px}
+.login-h{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;margin-bottom:6px}
+.login-sub{font-size:13px;color:var(--t2);margin-bottom:28px;line-height:1.5}
+.field{margin-bottom:16px}
+.field label{font-size:12px;font-weight:500;color:var(--t2);display:block;margin-bottom:6px}
+.field input{width:100%;background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);padding:11px 14px;color:var(--t1);font-size:13px;outline:none;transition:border .2s}
+.field input:focus{border-color:var(--green)}
+.field input::placeholder{color:var(--t3)}
+.btn-login{width:100%;background:var(--green);color:#000;font-family:'Syne',sans-serif;font-size:14px;font-weight:800;border:none;border-radius:var(--r);padding:13px;letter-spacing:.03em;transition:opacity .2s;margin-top:4px}
+.btn-login:hover{opacity:.85}
+.login-hint{font-size:11px;color:var(--t3);text-align:center;margin-top:16px;line-height:1.6}
+.login-hint b{color:var(--t2);font-weight:500}
+.login-links{display:flex;gap:10px;justify-content:center;margin-top:14px;font-size:11px;color:var(--t3)}
+.login-links a{color:var(--t2)}
+.err-msg{font-size:12px;color:var(--red);background:var(--red-dim);border:1px solid rgba(232,64,64,.2);border-radius:var(--r);padding:8px 12px;margin-bottom:14px;display:none}
+
+/* ── Sidebar ─────────────────────────────────────────────────── */
+.sb-top{padding:20px 16px 16px;border-bottom:1px solid var(--b1)}
+.sb-brand{display:flex;align-items:center;gap:9px}
+.sb-brand-icon{width:30px;height:30px;border-radius:8px;background:var(--green);display:flex;align-items:center;justify-content:center}
+.sb-brand-icon i{font-size:16px;color:#000}
+.sb-brand-name{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;letter-spacing:-.3px}
+.sb-brand-name em{color:var(--green);font-style:normal}
+.sb-portal-tag{font-size:9px;font-weight:700;font-family:'Syne',sans-serif;text-transform:uppercase;letter-spacing:.1em;color:var(--blue);background:var(--blue-dim);padding:2px 8px;border-radius:20px;display:inline-block;margin-top:8px}
+.sb-nav{flex:1;padding:12px 8px;overflow-y:auto}
+.sb-sec{font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;padding:0 8px;margin-bottom:4px;margin-top:14px;font-family:'Syne',sans-serif}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--r);cursor:pointer;font-size:13px;color:var(--t2);transition:all .15s;margin-bottom:1px;position:relative}
+.sb-item:hover{background:var(--s2);color:var(--t1)}
+.sb-item.active{background:var(--green-dim);color:var(--green)}
+.sb-item i{font-size:17px;min-width:20px}
+.sb-badge{margin-left:auto;font-size:10px;font-weight:700;background:var(--amber-dim);color:var(--amber);padding:1px 7px;border-radius:20px;font-family:'Syne',sans-serif}
+.sb-foot{padding:12px 8px;border-top:1px solid var(--b1)}
+.sb-user{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--r);background:var(--s2)}
+.sb-av{width:30px;height:30px;border-radius:50%;background:var(--blue-dim);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--blue);flex-shrink:0}
+.sb-uname{font-size:12px;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-uemail{font-size:10px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-logout{color:var(--t3);font-size:16px;padding:4px;flex-shrink:0;transition:color .15s}
+.sb-logout:hover{color:var(--red)}
+
+/* ── Topbar ──────────────────────────────────────────────────── */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:15px 24px;background:var(--s1);border-bottom:1px solid var(--b1);position:sticky;top:0;z-index:50}
+.tb-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700}
+.tb-sub{font-size:11px;color:var(--t3);margin-top:2px}
+.tb-right{display:flex;align-items:center;gap:10px}
+.live-pill{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;font-family:'Syne',sans-serif;color:var(--green);background:var(--green-dim);padding:4px 11px;border-radius:20px}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 1.4s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.tb-time{font-size:12px;color:var(--t2);font-family:'Syne',sans-serif}
+
+/* ── Content ─────────────────────────────────────────────────── */
+.content{padding:24px;flex:1}
+.screen{display:none;animation:fadeUp .25s ease}
+.screen.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ── Metrics ─────────────────────────────────────────────────── */
+.metrics{display:grid;gap:14px;margin-bottom:22px}
+.metrics-4{grid-template-columns:repeat(4,1fr)}
+.metrics-3{grid-template-columns:repeat(3,1fr)}
+.metrics-2{grid-template-columns:repeat(2,1fr)}
+.metric{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r2);padding:18px}
+.metric-lbl{font-size:10px;font-weight:700;color:var(--t2);font-family:'Syne',sans-serif;text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px}
+.metric-val{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--t1);letter-spacing:-.5px}
+.metric-sub{font-size:11px;color:var(--t3);margin-top:4px}
+.up{color:var(--green)}
+.down{color:var(--red)}
+
+/* ── Cards ───────────────────────────────────────────────────── */
+.card{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r2);padding:18px;margin-bottom:18px}
+.card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.card-title{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t2)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+.grid-2>.card,.grid-3>.card{margin-bottom:0}
+
+/* ── Badges ──────────────────────────────────────────────────── */
+.badge{font-size:10px;padding:3px 9px;border-radius:20px;font-weight:700;font-family:'Syne',sans-serif;white-space:nowrap;display:inline-block}
+.bg{background:var(--green-dim);color:var(--green)}
+.ba{background:var(--amber-dim);color:var(--amber)}
+.br{background:var(--red-dim);color:var(--red)}
+.bb{background:var(--blue-dim);color:var(--blue)}
+.bx{background:var(--s2);color:var(--t2)}
+
+/* ── Table ───────────────────────────────────────────────────── */
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{text-align:left;font-size:10px;color:var(--t3);font-weight:700;font-family:'Syne',sans-serif;text-transform:uppercase;letter-spacing:.08em;padding:6px 12px;border-bottom:1px solid var(--b1)}
+.tbl td{padding:11px 12px;border-bottom:1px solid var(--b1);color:var(--t2);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tbody tr:hover td{background:rgba(255,255,255,.015)}
+.tbl-name{font-weight:500;color:var(--t1)}
+.tbl-mono{font-family:'Syne',sans-serif;font-size:11px;color:var(--t3)}
+
+/* ── Map ─────────────────────────────────────────────────────── */
+.map{height:200px;background:var(--s2);border-radius:var(--r);border:1px solid var(--b1);position:relative;overflow:hidden}
+.map-pin{position:absolute;transform:translate(-50%,-50%)}
+.pin{width:11px;height:11px;border-radius:50%;border:2px solid var(--bg)}
+.pin-ring{position:absolute;border-radius:50%;border:2px solid;animation:ping 2s infinite;opacity:.5}
+@keyframes ping{0%{transform:scale(1);opacity:.5}100%{transform:scale(2.6);opacity:0}}
+.map-leg{position:absolute;bottom:8px;right:8px;background:rgba(8,9,11,.88);border:1px solid var(--b1);border-radius:var(--r);padding:7px 11px;font-size:10px;display:flex;flex-direction:column;gap:4px}
+.leg-row{display:flex;align-items:center;gap:6px;color:var(--t2)}
+.leg-dot{width:7px;height:7px;border-radius:50%}
+
+/* ── Chart Bars ──────────────────────────────────────────────── */
+.bars{display:flex;align-items:flex-end;gap:5px;height:90px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar{width:100%;border-radius:3px 3px 0 0;background:var(--s3);transition:height .4s}
+.bar.hi{background:var(--green)}
+.bar-lbl{font-size:9px;color:var(--t3);font-family:'Syne',sans-serif}
+
+/* ── Buttons ─────────────────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--r);font-size:12px;font-weight:700;font-family:'Syne',sans-serif;border:1px solid transparent;transition:all .15s;letter-spacing:.02em}
+.btn-g{background:var(--green);color:#000;border-color:var(--green)}
+.btn-g:hover{opacity:.85}
+.btn-o{background:transparent;color:var(--t2);border-color:var(--b1)}
+.btn-o:hover{background:var(--s2);color:var(--t1)}
+.btn-approve{background:var(--green-dim);color:var(--green);border-color:transparent;font-size:11px;padding:5px 11px}
+.btn-reject{background:var(--red-dim);color:var(--red);border-color:transparent;font-size:11px;padding:5px 11px}
+
+/* ── Onboarding rows ─────────────────────────────────────────── */
+.onboard-row{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--b1)}
+.onboard-row:last-child{border-bottom:none}
+.onboard-av{width:38px;height:38px;border-radius:50%;background:var(--blue-dim);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:12px;font-weight:800;color:var(--blue);flex-shrink:0}
+.onboard-info{flex:1;min-width:0}
+.onboard-name{font-size:13px;font-weight:500;color:var(--t1)}
+.onboard-meta{font-size:11px;color:var(--t3);margin-top:1px}
+
+/* ── Earnings bar ────────────────────────────────────────────── */
+.ebar{height:5px;background:var(--s3);border-radius:3px;margin-top:5px;overflow:hidden}
+.ebar-fill{height:100%;background:var(--green);border-radius:3px}
+
+/* ── Toast ───────────────────────────────────────────────────── */
+#toast{position:fixed;bottom:24px;right:24px;background:var(--s1);border:1px solid var(--green);color:var(--green);padding:11px 18px;border-radius:var(--r);font-size:12px;font-weight:700;font-family:'Syne',sans-serif;display:none;z-index:9999;box-shadow:0 4px 24px rgba(0,0,0,.4);animation:fadeUp .2s}
+
+/* ── Stat icon cards ─────────────────────────────────────────── */
+.metric-icon{width:36px;height:36px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.metric-icon i{font-size:18px}
+</style>
+</head>
+<body>
+
+<!-- ───────────────────────── LOGIN ───────────────────────────── -->
+<div id="login-page">
+  <div class="login-glow"></div>
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="brand-icon"><i class="ti ti-motorbike"></i></div>
+      <div class="brand-name">Moto<em>GO</em></div>
+    </div>
+    <div class="admin-tag"><i class="ti ti-shield-lock" style="font-size:10px"></i> Admin Portal</div>
+    <div class="login-h">Welcome back, Admin</div>
+    <div class="login-sub">Sign in to manage riders, passengers, and live operations across Accra.</div>
+    <div class="err-msg" id="err">Invalid email or password.</div>
+    <div class="field"><label>Email address</label><input type="email" id="l-email" value="admin@motogo.com" placeholder="admin@motogo.com"/></div>
+    <div class="field"><label>Password</label><input type="password" id="l-pass" value="admin123" placeholder="••••••••"/></div>
+    <button class="btn-login" onclick="doLogin()">Sign in to Admin Portal</button>
+    <div class="login-hint">Demo credentials: <b>admin@motogo.com</b> / <b>admin123</b></div>
+    <div class="login-links">
+      <a href="rider.html">→ Rider portal</a>
+      <a href="passenger.html">→ Passenger portal</a>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────────────── APP ─────────────────────────────── -->
+<div id="app-page" style="display:none">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sb-top">
+      <div class="sb-brand">
+        <div class="sb-brand-icon"><i class="ti ti-motorbike"></i></div>
+        <div class="sb-brand-name">Moto<em>GO</em></div>
+      </div>
+      <div class="sb-portal-tag"><i class="ti ti-shield-lock" style="font-size:9px"></i> Admin Portal</div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-sec">Overview</div>
+      <div class="sb-item active" data-screen="dashboard"><i class="ti ti-layout-dashboard"></i>Dashboard</div>
+      <div class="sb-item" data-screen="rides"><i class="ti ti-route"></i>Live rides</div>
+      <div class="sb-sec">Management</div>
+      <div class="sb-item" data-screen="riders"><i class="ti ti-motorbike"></i>Riders</div>
+      <div class="sb-item" data-screen="passengers"><i class="ti ti-users"></i>Passengers</div>
+      <div class="sb-item" data-screen="onboarding" id="onboard-nav"><i class="ti ti-user-check"></i>Onboarding<span class="sb-badge" id="pending-badge">0</span></div>
+      <div class="sb-sec">Insights</div>
+      <div class="sb-item" data-screen="analytics"><i class="ti ti-chart-bar"></i>Analytics</div>
+    </nav>
+    <div class="sb-foot">
+      <div class="sb-user">
+        <div class="sb-av" id="sb-av">AD</div>
+        <div style="flex:1;min-width:0">
+          <div class="sb-uname" id="sb-name">Admin</div>
+          <div class="sb-uemail" id="sb-email">admin@motogo.com</div>
+        </div>
+        <i class="ti ti-logout sb-logout" onclick="doLogout()" title="Logout"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <div class="tb-title" id="tb-title">Dashboard</div>
+        <div class="tb-sub">Accra, Ghana · MotoGO Operations Center</div>
+      </div>
+      <div class="tb-right">
+        <div class="live-pill"><div class="live-dot"></div>Live</div>
+        <div class="tb-time" id="tb-time"></div>
+      </div>
+    </div>
+    <div class="content">
+
+      <!-- Dashboard -->
+      <div class="screen active" id="screen-dashboard"></div>
+      <!-- Rides -->
+      <div class="screen" id="screen-rides"></div>
+      <!-- Riders -->
+      <div class="screen" id="screen-riders"></div>
+      <!-- Passengers -->
+      <div class="screen" id="screen-passengers"></div>
+      <!-- Onboarding -->
+      <div class="screen" id="screen-onboarding"></div>
+      <!-- Analytics -->
+      <div class="screen" id="screen-analytics"></div>
+
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<script src="db.js"></script>
+<script>
+// ── Auth ────────────────────────────────────────────────────────
+function doLogin(){
+  const email = document.getElementById('l-email').value.trim();
+  const pass  = document.getElementById('l-pass').value;
+  const res   = MotoDB.login(email, pass);
+  if(!res.success || res.user.role !== 'admin'){
+    document.getElementById('err').style.display='block';
+    document.getElementById('err').textContent = res.success ? 'Access denied — this portal is for admins only.' : res.error;
+    return;
+  }
+  document.getElementById('login-page').style.display='none';
+  document.getElementById('app-page').style.display='flex';
+  initApp(res.user);
+}
+function doLogout(){ MotoDB.logout(); location.reload(); }
+// Allow Enter key
+['l-email','l-pass'].forEach(id=>document.getElementById(id)?.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();}));
+
+// ── Init ────────────────────────────────────────────────────────
+function initApp(user){
+  document.getElementById('sb-name').textContent  = user.name;
+  document.getElementById('sb-email').textContent = user.email;
+  document.getElementById('sb-av').textContent    = user.name.split(' ').map(x=>x[0]).join('').slice(0,2);
+  updateClock();
+  setInterval(updateClock, 1000);
+  updatePendingBadge();
+  renderScreen('dashboard');
+  document.querySelectorAll('.sb-item[data-screen]').forEach(el=>{
+    el.addEventListener('click',()=>{
+      document.querySelectorAll('.sb-item').forEach(x=>x.classList.remove('active'));
+      el.classList.add('active');
+      renderScreen(el.dataset.screen);
+      document.getElementById('tb-title').textContent = el.textContent.replace(/\d+$/,'').trim();
+    });
+  });
+}
+function updateClock(){
+  const now = new Date();
+  document.getElementById('tb-time').textContent = now.toLocaleTimeString('en-GH',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+function updatePendingBadge(){
+  const n = MotoDB.getRiders({approved:false}).length;
+  document.getElementById('pending-badge').textContent = n;
+  document.getElementById('pending-badge').style.display = n ? '' : 'none';
+}
+
+// ── Screen renderer ─────────────────────────────────────────────
+function renderScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el = document.getElementById('screen-'+id);
+  if(!el) return;
+  el.classList.add('active');
+  const renders = {dashboard:renderDashboard,rides:renderRides,riders:renderRiders,passengers:renderPassengers,onboarding:renderOnboarding,analytics:renderAnalytics};
+  if(renders[id]) renders[id](el);
+}
+
+// ── Dashboard ───────────────────────────────────────────────────
+function renderDashboard(el){
+  const s = MotoDB.getStats();
+  const riders = MotoDB.getRiders();
+  const online = riders.filter(r=>r.status==='online'||r.status==='riding').length;
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const bars = (s.tripsWeek||[36,44,30,50,56,48,60]);
+  const maxB = Math.max(...bars);
+  el.innerHTML = `
+  <div class="metrics metrics-4">
+    <div class="metric">
+      <div class="metric-icon" style="background:var(--green-dim)"><i class="ti ti-route" style="color:var(--green)"></i></div>
+      <div class="metric-lbl">Active rides</div>
+      <div class="metric-val">${s.activeRides}</div>
+      <div class="metric-sub up">↑ 3 this hour</div>
+    </div>
+    <div class="metric">
+      <div class="metric-icon" style="background:var(--amber-dim)"><i class="ti ti-motorbike" style="color:var(--amber)"></i></div>
+      <div class="metric-lbl">Online riders</div>
+      <div class="metric-val">${online}</div>
+      <div class="metric-sub">of ${riders.filter(r=>r.approved).length} approved</div>
+    </div>
+    <div class="metric">
+      <div class="metric-icon" style="background:var(--blue-dim)"><i class="ti ti-chart-bar" style="color:var(--blue)"></i></div>
+      <div class="metric-lbl">Today's trips</div>
+      <div class="metric-val">${s.tripsToday}</div>
+      <div class="metric-sub up">↑ 18% vs yesterday</div>
+    </div>
+    <div class="metric">
+      <div class="metric-icon" style="background:var(--green-dim)"><i class="ti ti-currency-dollar" style="color:var(--green)"></i></div>
+      <div class="metric-lbl">Revenue today</div>
+      <div class="metric-val">GH₵ ${s.revenueToday.toLocaleString()}</div>
+      <div class="metric-sub up">↑ 22%</div>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-hd"><div class="card-title">Live map — Accra</div><span class="badge bg">14 active</span></div>
+      <div class="map">
+        <svg width="100%" height="100%" style="position:absolute;inset:0">
+          <rect width="100%" height="100%" fill="#161b23"/>
+          <line x1="0" y1="60" x2="100%" y2="60" stroke="#252d3a" stroke-width="2"/>
+          <line x1="0" y1="120" x2="100%" y2="120" stroke="#1e2430" stroke-width="1.5"/>
+          <line x1="0" y1="170" x2="100%" y2="170" stroke="#252d3a" stroke-width="2"/>
+          <line x1="90" y1="0" x2="90" y2="100%" stroke="#252d3a" stroke-width="2"/>
+          <line x1="200" y1="0" x2="200" y2="100%" stroke="#1e2430" stroke-width="1.5"/>
+          <line x1="310" y1="0" x2="310" y2="100%" stroke="#252d3a" stroke-width="2"/>
+          <line x1="400" y1="0" x2="400" y2="100%" stroke="#1e2430" stroke-width="1.5"/>
+        </svg>
+        <div class="map-pin" style="left:36%;top:50%">
+          <div class="pin-ring" style="width:24px;height:24px;top:-6px;left:-6px;border-color:var(--green)"></div>
+          <div class="pin" style="background:var(--green)"></div>
+        </div>
+        <div class="map-pin" style="left:54%;top:37%"><div class="pin" style="background:var(--red)"></div></div>
+        <div class="map-pin" style="left:23%;top:62%"><div class="pin" style="background:var(--green)"></div></div>
+        <div class="map-pin" style="left:68%;top:55%"><div class="pin" style="background:var(--green)"></div></div>
+        <div class="map-pin" style="left:78%;top:28%"><div class="pin" style="background:var(--amber)"></div></div>
+        <div class="map-pin" style="left:45%;top:80%"><div class="pin" style="background:var(--t3)"></div></div>
+        <div class="map-pin" style="left:15%;top:38%"><div class="pin" style="background:var(--amber)"></div></div>
+        <div class="map-leg">
+          <div class="leg-row"><span class="leg-dot" style="background:var(--green)"></span>Online rider</div>
+          <div class="leg-row"><span class="leg-dot" style="background:var(--amber)"></span>On a ride</div>
+          <div class="leg-row"><span class="leg-dot" style="background:var(--red)"></span>Passenger</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><div class="card-title">Trips this week</div></div>
+      <div class="bars">
+        ${bars.map((h,i)=>`<div class="bar-col"><div class="bar${i===6?' hi':''}" style="height:${Math.round(h/maxB*78)}px"></div><div class="bar-lbl">${days[i]}</div></div>`).join('')}
+      </div>
+      <div style="margin-top:18px">
+        <div class="card-title" style="margin-bottom:12px">Top earners</div>
+        ${MotoDB.getRiders({approved:true}).sort((a,b)=>b.earnings-a.earnings).slice(0,3).map(r=>`
+        <div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px">
+            <span style="color:var(--t1);font-weight:500">${r.name}</span>
+            <span style="color:var(--green);font-weight:700">GH₵ ${r.earnings.toLocaleString()}</span>
+          </div>
+          <div class="ebar"><div class="ebar-fill" style="width:${Math.round(r.earnings/9020*100)}%"></div></div>
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── Rides ───────────────────────────────────────────────────────
+function renderRides(el){
+  const rides = MotoDB.getRides();
+  const statusBadge = {active:'ba',completed:'bg',cancelled:'br'};
+  el.innerHTML = `
+  <div class="card">
+    <div class="card-hd"><div class="card-title">All rides</div><span class="badge bg">${rides.length} total</span></div>
+    <table class="tbl">
+      <thead><tr><th>ID</th><th>Passenger</th><th>Rider</th><th>From</th><th>To</th><th>Fare</th><th>Date</th><th>Time</th><th>Status</th><th>Rating</th></tr></thead>
+      <tbody>
+        ${rides.map(r=>`<tr>
+          <td class="tbl-mono">${r.id}</td>
+          <td class="tbl-name">${r.passengerName}</td>
+          <td>${r.riderName}</td>
+          <td>${r.from}</td>
+          <td>${r.to}</td>
+          <td style="color:var(--green);font-weight:700">GH₵ ${r.fare}</td>
+          <td class="tbl-mono">${r.date||'—'}</td>
+          <td class="tbl-mono">${r.time}</td>
+          <td><span class="badge ${statusBadge[r.status]||'bx'}">${r.status}</span></td>
+          <td style="color:var(--amber)">${r.rating ? '★'.repeat(r.rating) : '—'}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+// ── Riders ──────────────────────────────────────────────────────
+function renderRiders(el){
+  const riders = MotoDB.getRiders({approved:true});
+  const sc = {online:'bg',riding:'ba',offline:'bx'};
+  el.innerHTML = `
+  <div class="metrics metrics-3">
+    <div class="metric"><div class="metric-lbl">Total approved</div><div class="metric-val">${riders.length}</div></div>
+    <div class="metric"><div class="metric-lbl">Currently online</div><div class="metric-val">${riders.filter(r=>r.status==='online').length}</div><div class="metric-sub up">Available for rides</div></div>
+    <div class="metric"><div class="metric-lbl">On rides now</div><div class="metric-val">${riders.filter(r=>r.status==='riding').length}</div></div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><div class="card-title">Approved riders</div></div>
+    <table class="tbl">
+      <thead><tr><th>Name</th><th>Plate</th><th>Phone</th><th>Rating</th><th>Trips</th><th>Earnings</th><th>Joined</th><th>Status</th></tr></thead>
+      <tbody>
+        ${riders.map(r=>`<tr>
+          <td class="tbl-name">${r.name}</td>
+          <td class="tbl-mono">${r.plate}</td>
+          <td style="color:var(--t2)">${MotoDB.getRiders().find(x=>x.id===r.id) ? (MotoDB.get('users')||[]).find(u=>u.id===r.userId)?.phone||'—' : '—'}</td>
+          <td style="color:var(--amber)">★ ${r.rating||'—'}</td>
+          <td>${r.trips}</td>
+          <td style="color:var(--green);font-weight:700">GH₵ ${r.earnings.toLocaleString()}</td>
+          <td class="tbl-mono">${r.joinedDate}</td>
+          <td><span class="badge ${sc[r.status]||'bx'}">${r.status}</span></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+// ── Passengers ──────────────────────────────────────────────────
+function renderPassengers(el){
+  const pax = MotoDB.getPassengers();
+  el.innerHTML = `
+  <div class="card">
+    <div class="card-hd"><div class="card-title">All passengers</div><span class="badge bb">${pax.length} users</span></div>
+    <table class="tbl">
+      <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Home</th><th>Work</th><th>Total trips</th><th>Total spent</th><th>Joined</th></tr></thead>
+      <tbody>
+        ${pax.map(p=>`<tr>
+          <td class="tbl-name">${p.name}</td>
+          <td style="color:var(--t3)">${(MotoDB.get('users')||[]).find(u=>u.id===p.userId)?.email||'—'}</td>
+          <td style="color:var(--t2)">${(MotoDB.get('users')||[]).find(u=>u.id===p.userId)?.phone||'—'}</td>
+          <td>${p.savedHome||'—'}</td>
+          <td>${p.savedWork||'—'}</td>
+          <td style="color:var(--blue);font-weight:700">${p.totalTrips}</td>
+          <td style="color:var(--green);font-weight:700">GH₵ ${p.totalSpent}</td>
+          <td class="tbl-mono">${p.joinedDate}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+// ── Onboarding ──────────────────────────────────────────────────
+function renderOnboarding(el){
+  const pending = MotoDB.getRiders({approved:false});
+  el.innerHTML = `
+  <div class="metrics metrics-3">
+    <div class="metric"><div class="metric-lbl">Pending review</div><div class="metric-val">${pending.length}</div><div class="metric-sub ba">Awaiting decision</div></div>
+    <div class="metric"><div class="metric-lbl">Approved this month</div><div class="metric-val">8</div><div class="metric-sub up">↑ 2 vs last month</div></div>
+    <div class="metric"><div class="metric-lbl">Rejected</div><div class="metric-val">3</div><div class="metric-sub">this month</div></div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><div class="card-title">Pending applications</div><span class="badge ba">${pending.length} pending</span></div>
+    ${pending.length === 0
+      ? '<div style="text-align:center;padding:28px;color:var(--t3)"><i class="ti ti-check" style="font-size:28px;display:block;margin-bottom:8px"></i>All caught up — no pending applications</div>'
+      : pending.map(r=>`
+      <div class="onboard-row">
+        <div class="onboard-av">${r.name.split(' ').map(x=>x[0]).join('')}</div>
+        <div class="onboard-info">
+          <div class="onboard-name">${r.name}</div>
+          <div class="onboard-meta">${(MotoDB.get('users')||[]).find(u=>u.id===r.userId)?.email||'—'} · ${r.plate} · Applied ${r.joinedDate}</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-approve" onclick="approve('${r.id}')"><i class="ti ti-check"></i> Approve</button>
+          <button class="btn btn-reject" onclick="reject('${r.id}')"><i class="ti ti-x"></i> Reject</button>
+        </div>
+      </div>`).join('')}
+  </div>`;
+}
+
+function approve(id){ MotoDB.approveRider(id); updatePendingBadge(); toast('Rider approved!'); renderScreen('onboarding'); }
+function reject(id){ MotoDB.rejectRider(id); updatePendingBadge(); toast('Rider rejected.'); renderScreen('onboarding'); }
+
+// ── Analytics ───────────────────────────────────────────────────
+function renderAnalytics(el){
+  const s = MotoDB.getStats();
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const tw = s.tripsWeek||[];
+  const rw = s.revenueWeek||[];
+  const maxT = Math.max(...tw);
+  const maxR = Math.max(...rw);
+  el.innerHTML = `
+  <div class="metrics metrics-4">
+    <div class="metric"><div class="metric-lbl">Week trips</div><div class="metric-val">${tw.reduce((a,b)=>a+b,0).toLocaleString()}</div><div class="metric-sub up">↑ 12%</div></div>
+    <div class="metric"><div class="metric-lbl">Week revenue</div><div class="metric-val">GH₵ ${rw.reduce((a,b)=>a+b,0).toLocaleString()}</div><div class="metric-sub up">↑ 9%</div></div>
+    <div class="metric"><div class="metric-lbl">Avg fare</div><div class="metric-val">GH₵ 18.6</div><div class="metric-sub">per trip</div></div>
+    <div class="metric"><div class="metric-lbl">Avg rating</div><div class="metric-val">4.8 ★</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-hd"><div class="card-title">Daily trips</div></div>
+      <div class="bars">
+        ${tw.map((h,i)=>`<div class="bar-col"><div class="bar${i===6?' hi':''}" style="height:${Math.round(h/maxT*78)}px"></div><div class="bar-lbl">${days[i]}</div></div>`).join('')}
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><div class="card-title">Daily revenue</div></div>
+      <div class="bars">
+        ${rw.map((h,i)=>`<div class="bar-col"><div class="bar${i===6?' hi':''}" style="height:${Math.round(h/maxR*78)}px"></div><div class="bar-lbl">${days[i]}</div></div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── Toast ────────────────────────────────────────────────────────
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.style.display='block'; clearTimeout(window._t); window._t=setTimeout(()=>t.style.display='none',2600); }
+
+// ── Auto-login if session exists ─────────────────────────────────
+(function(){
+  const s = MotoDB.getSession();
+  if(s && s.role === 'admin'){
+    document.getElementById('login-page').style.display='none';
+    document.getElementById('app-page').style.display='flex';
+    initApp(s);
+  }
+})();
+</script>
+</body>
+</html>
